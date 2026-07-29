@@ -1,0 +1,9 @@
+const express = require("express");
+const router = express.Router();
+
+const MarketController = require("../controllers/MarketController");
+
+//GET/api/candles
+router.get("/candles", MarketController.getCandles);
+
+module.exports = router;
