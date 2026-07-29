@@ -4,6 +4,9 @@ const router = express.Router();
 const MarketController = require("../controllers/MarketController");
 
 //GET/api/candles
-router.get("/candles", MarketController.getCandles);
+
+const validateMarketRequest = require("../middleware/ValidateMarketRequest");
+
+router.get("/candles", validateMarketRequest, MarketController.getCandles);
 
 module.exports = router;

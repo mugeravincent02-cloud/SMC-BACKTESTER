@@ -27,3 +27,22 @@ Risk Management
 Examples
 
 Definitions
+
+## Current Implementation Status
+
+✅Completed
+
+- Market data acquisition
+
+In Progress
+
+- Candle standardization
+
+Planned
+
+- Swing detection
+- BOS detection
+- CHoCH detection
+- Liquidity detection
+- Order Block detection
+- Fair Value Gap detection

@@ -21,19 +21,11 @@ async function getCandles(req, res) {
       limit = DEFAULT_LIMIT,
     } = req.query;
 
-    const parsedLimit = Number(limit);
-    if (!Number.isInteger(parsedLimit) || parsedLimit <= 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Limit must be a positive integer",
-      });
-    }
-
     //Fetch raw market data
     const rawCandles = await BinanceService.fetchCandles(
       symbol,
       interval,
-      parsedLimit
+      limit
     );
 
     //Convert to standard format

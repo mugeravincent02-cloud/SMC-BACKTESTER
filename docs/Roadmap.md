@@ -75,3 +75,64 @@ README.md
 # . Version History
 
 # 10. Definition of Done
+
+# Update as of Phase 2
+
+# Roadmap
+
+## Phase 1 - Foundation
+
+### Sprint 1
+
+- ✅ Project architecture
+- ✅ Folder structure
+- ✅ Express backend setup
+- ✅ React frontend setup
+- ✅ Documentation created
+
+### Sprint 2
+
+- ✅ Binance API integration
+- ✅ Axios configured
+- ✅ DataCleaner module
+- ✅ MarketController
+- ✅ Market routes
+- ✅ Live candle endpoint
+- ✅ Configuration file
+- ✅ Market validation middleware
+
+### Sprint 3
+
+- [ ] React API connection
+- [ ] Dashboard
+- [ ] Market selector
+- [ ] Timeframe selector
+- [ ] Candle table
+
+### Sprint 4
+
+- [ ] TradingView Lightweight Charts
+- [ ] Live candlestick chart
+- [ ] Zoom and pan
+- [ ] Crosshair
+
+Phase 2
+
+- Swing Detection
+- BOS Detection
+- CHoCH Detection
+- Liquidity Detection
+- Order Blocks
+- Fair Value Gaps
+
+Phase 3
+
+- Strategy Engine
+- Signal Engine
+- Backtesting Engine
+
+Phase 4
+
+- TradingView drawing tools
+- Reports
+- Statistics

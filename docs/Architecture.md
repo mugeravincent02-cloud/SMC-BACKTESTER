@@ -68,3 +68,47 @@ MongoDB
         │
         ▼
     JSON Response
+
+# As of Phase 2
+
+## Current Backend Architecture
+
+Client (React)
+│
+▼
+Express API
+│
+▼
+Routes
+│
+▼
+Validation Middleware
+│
+▼
+Controllers
+│
+▼
+Market Services
+│
+▼
+Binance REST API
+
+### Routes
+
+Receive incoming requests and forward them to middleware and controllers.
+
+### Middleware
+
+Validates request parameters before they reach the business logic.
+
+### Controllers
+
+Coordinate requests, call services and prepare API responses.
+
+### Services
+
+Communicate with external APIs and provide market data.
+
+### DataCleaner
+
+Transforms raw Binance candles into the application's standard candle model.
