@@ -43,3 +43,23 @@ Outcome
 
 The backend successfully retrieves live Binance candlestick data, converts it
 into the application's internal candle format and exposes it through the REST API.
+
+## Sprint 3 Summary
+
+Goal
+
+Connect the React frontend to the Express backend.
+
+Completed
+
+- Axios instance
+- API abstraction layer
+- Market service
+- Dashboard skeleton
+- Sidebar controls
+- React state management
+- Live market loading
+
+Outcome
+
+Users can request live market data through the dashboard, and the application updates using data returned by the backend.

@@ -112,3 +112,42 @@ Communicate with external APIs and provide market data.
 ### DataCleaner
 
 Transforms raw Binance candles into the application's standard candle model.
+
+# Front end Architecture
+
+    React
+    │
+    ▼
+    Pages
+    │
+    ▼
+    Components
+    │
+    ▼
+    Services
+    │
+    ▼
+    API Layer
+    │
+    ▼
+    Axios
+    │
+    ▼
+    Express API
+
+Pages: Coordinate page-level state and compose the dashboard.
+Components: Reusable UI elements with a single responsibility.
+Services: Contain frontend business logic and orchestrate API calls.
+API Layer: Encapsulates HTTP requests.
+Axios: Handles communication with the backend.
+
+## Chart Layer
+
+The chart layer is responsible only for market visualization.
+
+It receives processed candle data and displays:
+
+- Candlesticks
+- Indicators
+- Strategy annotations
+- Trading signals

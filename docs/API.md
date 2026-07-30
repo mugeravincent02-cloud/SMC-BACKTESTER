@@ -63,3 +63,8 @@ GET
         "success": false,
         "message": "Limit must be an integer between 1 and 1000."
     }
+
+# As of stage 3
+
+frontend now consumes:
+GET /api/candles

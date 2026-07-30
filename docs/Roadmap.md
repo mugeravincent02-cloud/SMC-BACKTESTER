@@ -116,6 +116,25 @@ README.md
 - [ ] Zoom and pan
 - [ ] Crosshair
 
+## Sprint 3 Summary of finished
+
+- ✅ Axios client
+- ✅ API layer
+- ✅ Service layer
+- ✅ Dashboard layout
+- ✅ Sidebar
+- ✅ Navbar
+- ✅ Market selector
+- ✅ Timeframe selector
+- ✅ Candle limit selector
+- ✅ Load Market button
+- ✅ React state management
+- ✅ Backend integration
+- ✅ TradingView Lightweight Charts integration
+- ✅ Candlestick rendering
+- ✅ Binance timestamp conversion
+- ✅ Dynamic chart updates
+
 Phase 2
 
 - Swing Detection
