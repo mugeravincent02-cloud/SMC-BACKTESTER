@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
 import { createChart, CandlestickSeries } from "lightweight-charts";
+import { chartOptions } from "../config/chartConfig";
+import { mapCandlesToChart } from "../utils/chartDataMapper";
 
 export default function CandleChart({ candles }) {
   const chartContainerRef = useRef();
@@ -10,22 +12,23 @@ export default function CandleChart({ candles }) {
     }
 
     const chart = createChart(chartContainerRef.current, {
+      ...chartOptions,
       width: chartContainerRef.current.clientWidth,
-      height: 500,
     });
+
     const candleSeries = chart.addSeries(CandlestickSeries, {});
 
-    const chartData = candles.map((candle) => ({
-      time: candle.time / 1000,
-      open: candle.open,
-      high: candle.high,
-      low: candle.low,
-      close: candle.close,
-    }));
+    candleSeries.setData(mapCandlesToChart(candles));
 
-    candleSeries.setData(chartData);
+    const handleResize = () => {
+      chart.applyOptions({
+        width: chartContainerRef.current.clientWidth,
+      });
+    };
+    window.addEventListener("resize", handleResize);
 
     return () => {
+      window.removeEventListener("resize", handleResize);
       chart.remove();
     };
   }, [candles]);

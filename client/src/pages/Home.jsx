@@ -8,7 +8,7 @@ import Sidebar from "../components/layout/Sidebar";
 import StatisticalPanel from "../components/market/StatisticsPanel";
 import CandleTable from "../components/market/CandleTable";
 
-import { getMarketData } from "../services/MarketServices";
+import { getMarketData } from "../services/MarketService";
 
 export default function Home() {
   const [symbol, setSymbol] = useState("BTCUSDT");
@@ -36,15 +36,16 @@ export default function Home() {
     loadMarket();
   }, []);
 
-  if (loading) {
-    return <h2>Loading market ...</h2>;
-  }
+  // if (loading) {
+  //   return <h2>Loading market ...</h2>;
+  // }
   if (error) {
     return <h2>{error}</h2>;
   }
 
   return (
     <DashboardLayout>
+      {loading && <div className="loading-overlay">Loading Market...</div>}
       <Navbar />
       <Sidebar
         symbol={symbol}
