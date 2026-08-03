@@ -151,3 +151,16 @@ It receives processed candle data and displays:
 - Indicators
 - Strategy annotations
 - Trading signals
+
+# Analysis Engine
+
+Market Data
+│
+▼
+SMC Engine
+│
+├── Swing Detector
+├── Structure Detector
+├── BOS Detector
+├── CHoCH Detector
+└── Future Strategy Modules

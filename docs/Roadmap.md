@@ -135,7 +135,15 @@ README.md
 - ✅ Binance timestamp conversion
 - ✅ Dynamic chart updates
 
-Phase 2
+## Phase 4
+
+### Sprint 4.1
+
+- ✅ SMC module
+- ✅ Swing detector
+- ✅ SMC controller
+- ✅ Swing API endpoint
+  Phase 2
 
 - Swing Detection
 - BOS Detection
