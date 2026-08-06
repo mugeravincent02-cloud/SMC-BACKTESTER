@@ -164,3 +164,18 @@ SMC Engine
 ├── BOS Detector
 ├── CHoCH Detector
 └── Future Strategy Modules
+ 
+ # SMC Engine
+
+     ↓
+
+     Events
+
+     ↓
+
+     Chart
+
+     ↓
+
+     Backtester
+

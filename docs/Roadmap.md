@@ -143,6 +143,13 @@ README.md
 - ✅ Swing detector
 - ✅ SMC controller
 - ✅ Swing API endpoint
+
+### Sprint 4.3
+
+- ✅ BOS detector
+- ✅ Bullish BOS
+- ✅ Bearish BOS
+
   Phase 2
 
 - Swing Detection
