@@ -63,3 +63,14 @@ Completed
 Outcome
 
 Users can request live market data through the dashboard, and the application updates using data returned by the backend.
+
+Sprint 4.5
+
+Goal:
+Implement the first liquidity module.
+
+Completed
+
+- Equal High detection
+- Equal Low detection
+- Shared SMC configuration

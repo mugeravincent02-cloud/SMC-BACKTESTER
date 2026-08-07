@@ -2,6 +2,7 @@ const { detectSwings } = require("../smc/SwingDetector");
 const { classifyStructure } = require("../smc/StructureDetector");
 const { detectBOS } = require("../smc/BOSDetector");
 const { detectCHOCK } = require("../smc/CHOCHDetector");
+const { detectLiquidity } = require("../smc/LiquidityDetector");
 
 const BinanceService = require("../market/BinanceService");
 const DataCleaner = require("../market/DataCleaner");
@@ -16,6 +17,7 @@ async function detectMarketStructure(req, res) {
     const bos = detectBOS(candles, swings);
     const swings = detectSwings(candles);
     const choch = detectCHOCK(structure);
+    const liquidity = detectLiquidity(swings);
 
     res.json({
       success: true,
@@ -23,6 +25,7 @@ async function detectMarketStructure(req, res) {
       structure,
       bos,
       choch,
+      liquidity,
     });
   } catch (error) {
     res.status(500).json({

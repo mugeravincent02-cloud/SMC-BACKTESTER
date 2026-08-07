@@ -1,5 +1,6 @@
 const BinanceService = require("../market/BinanceService");
 const DataCleaner = require("../market/DataCleaner");
+
 const {
   DEFAULT_SYMBOL,
   DEFAULT_INTERVAL,

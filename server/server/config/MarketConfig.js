@@ -1,5 +1,0 @@
-module.exports = {
-  DEFAULT_SYMBOL: "BTCUSDT",
-  DEFAULT_INTERVAL: "1h",
-  DEFAULT_LIMIT: 100,
-};

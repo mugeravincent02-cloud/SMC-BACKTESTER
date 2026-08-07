@@ -150,6 +150,16 @@ README.md
 - ✅ Bullish BOS
 - ✅ Bearish BOS
 
+## Sprint 4.5
+
+### Liquidity Engine
+
+- ✅ Created SMCConfig
+- ✅ Refactored SwingDetector to SMCConfig
+- ✅ Implemented Equal High detection
+- ✅ Implemented Equal Low detection
+- ✅ Returned average liquidity price
+
   Phase 2
 
 - Swing Detection
