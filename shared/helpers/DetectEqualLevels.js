@@ -1,6 +1,7 @@
 // const { equalLevelTolerance } = require("../../config/smcConfig");
 const { equalLevelTolerance } = require("../../server/config/smcConfig");
 
+
 function detectEqualLevels(swings, type, priceKey) {
   const equalLevels = [];
 
@@ -15,7 +16,7 @@ function detectEqualLevels(swings, type, priceKey) {
       first.candle[priceKey] - second.candle[priceKey]
     );
     if (difference <= first.candle[priceKey] * equalLevelTolerance) {
-      equalLevelTolerance.push({ first, second });
+      equalLevels.push({ first, second });
     }
   }
   return equalLevels;

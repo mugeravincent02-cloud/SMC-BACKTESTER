@@ -1,7 +1,7 @@
 const { detectSwings } = require("../smc/SwingDetector");
 const { classifyStructure } = require("../smc/StructureDetector");
 const { detectBOS } = require("../smc/BOSDetector");
-const { detectCHOCK } = require("../smc/CHOCHDetector");
+const { detectCHOCH } = require("../smc/CHOCHDetector");
 const { detectLiquidity } = require("../smc/LiquidityDetector");
 
 const BinanceService = require("../market/BinanceService");
@@ -13,10 +13,11 @@ async function detectMarketStructure(req, res) {
 
     const candles = DataCleaner.cleanCandles(raw);
 
+    const swings = detectSwings(candles);
+
     const structure = classifyStructure(swings);
     const bos = detectBOS(candles, swings);
-    const swings = detectSwings(candles);
-    const choch = detectCHOCK(structure);
+    const choch = detectCHOCH(structure);
     const liquidity = detectLiquidity(swings);
 
     res.json({
