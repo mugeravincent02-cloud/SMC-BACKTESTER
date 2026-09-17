@@ -7,6 +7,8 @@ function detectBOS(candles, swings) {
         if (candles[i].close > swing.candle.high) {
           bosEvents.push({
             direction: "BULLISH",
+            brokenSwing: swing.index,
+            // Keep the previous bullish field for existing API consumers.
             brokenSwings: swing.index,
             breakIndex: i,
             breakPrice: candles[i].close,
@@ -31,7 +33,7 @@ function detectBOS(candles, swings) {
     }
   }
 
-  return bosEvents;
+  return bosEvents.sort((first, second) => first.breakIndex - second.breakIndex);
 }
 module.exports = {
   detectBOS,

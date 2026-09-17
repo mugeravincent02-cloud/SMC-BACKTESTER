@@ -11,6 +11,7 @@ const BASE_URL = "https://api.binance.com/api/v3/klines";
 async function fetchCandles(symbol = "BTCUSDT", interval = "1h", limit = 100) {
   try {
     const response = await axios.get(BASE_URL, {
+      timeout: 8000,
       params: {
         symbol,
         interval,

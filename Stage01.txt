@@ -1,0 +1,75 @@
+STAGE 01: BASELINE AUDIT
+
+Audit the existing FX/SMC project before adding new functionality.
+
+OBJECTIVE
+
+Establish exactly what currently works and what does not.
+
+TASKS
+
+1. Inspect the repository structure.
+
+2. Inspect:
+   - server/package.json
+   - client/package.json
+   - server files
+   - client files
+   - docs
+
+3. Run the backend.
+
+4. Run the frontend.
+
+5. Test the root backend endpoint.
+
+6. Test:
+
+GET /api/candles?symbol=BTCUSDT&interval=1h&limit=100
+
+7. Test:
+
+GET /api/smc/swings
+
+8. Verify the returned candle structure.
+
+9. Verify the returned SMC structure.
+
+10. Inspect imports and exports.
+
+11. Identify:
+    - unused files
+    - duplicate code
+    - undefined variables
+    - inconsistent naming
+    - missing validation
+    - missing error handling
+    - missing tests
+    - security issues
+    - frontend issues
+
+12. Do NOT perform a large refactor.
+
+13. Fix only obvious blocking problems required to establish a stable baseline.
+
+14. Update:
+
+docs/Agile.md
+docs/Roadmap.md
+
+with the actual current state.
+
+OUTPUT
+
+Give me:
+
+- Current working features
+- Current broken features
+- Current warnings
+- Current technical debt
+- Current missing tests
+- Recommended next implementation step
+
+Do NOT implement Stage 02.
+
+Wait for approval.

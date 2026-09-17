@@ -19,6 +19,7 @@ export default function CandleChart({ candles }) {
     const candleSeries = chart.addSeries(CandlestickSeries, {});
 
     candleSeries.setData(mapCandlesToChart(candles));
+    chart.timeScale().fitContent();
 
     const handleResize = () => {
       chart.applyOptions({
@@ -26,9 +27,12 @@ export default function CandleChart({ candles }) {
       });
     };
     window.addEventListener("resize", handleResize);
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(chartContainerRef.current);
 
     return () => {
       window.removeEventListener("resize", handleResize);
+      resizeObserver.disconnect();
       chart.remove();
     };
   }, [candles]);

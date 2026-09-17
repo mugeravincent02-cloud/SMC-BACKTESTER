@@ -1,5 +1,7 @@
 # 1. Project Vision
 
+> Current status (2026-09-18): Stage 01 baseline audit completed with recorded limitations. The original sprint/phase lists below are preserved history. The current implementation matrix at the end supersedes their status claims. Stage 02 has not started.
+
     Current Sprint
 
     Sprint: 1
@@ -180,3 +182,25 @@ Phase 4
 - TradingView drawing tools
 - Reports
 - Statistics
+
+## Current implementation matrix — Stage 01 audit, 2026-09-18
+
+| Area | Actual state | Remaining work |
+| --- | --- | --- |
+| Express and React/Vite foundation | Implemented; both processes start, frontend serves HTML/modules and proxy works. | Browser visual/interaction checks and deployment verification. |
+| Market data | Binance crypto candles load; exact BTCUSDT/1h/100 request passes. | FX/OANDA, historical pagination, gap/open-candle policy, retry/rate-limit behavior. |
+| Candle normalization | Numeric OHLCV, timestamp/order and row validation implemented and tested. | Confirm closed-candle availability rules and day/session coverage expectations. |
+| Chart/dashboard | v5 candlestick chart, selectors, table, statistics and inline retry path implemented; SSR/build checks pass. | Real-browser canvas, resize, retry and stale-request tests; SMC overlays are absent. |
+| Swings and structure | Three-candle swings and previous-same-type HH/HL/LH/LL classification implemented. | Confirmation timing, ties and relevant/protected structural swings need approved rules. |
+| BOS | Close-based breaks implemented; ordered results and reference compatibility tested. | Continuation versus reversal semantics and chronological availability validation. |
+| CHoCH | Adjacent-label transition heuristic implemented; event fields work. | Meaningful reversal detection is not strategy-validated; ordinary alternating labels can suppress transitions. |
+| Liquidity | Equal-high/low pairs and available-UTC-day extrema are wired into the API. | Full/partial-day policy, session/week levels, sweep detection and clustering rules. |
+| Strategy and backtesting | OB/FVG/POI, HTF/LTF entries, risk/trade management and performance simulation are not implemented. | Future approved stages only. |
+| Tests | 22 backend and four frontend checks pass; frontend lint/build pass. | Browser tests, chronological/repainting fixtures, time boundaries, actual timeout behavior and broader failure contracts. |
+| Repository/security | Real root ignore file exists; environment examples exist; current docs omit old credential values. | Stage 01 removes local server environment from the root index before commit; tracked vendor files, nested Git ownership, historical credential rotation and production controls remain. |
+
+**Corrections to earlier status claims:** SwingDetector does not use smcConfig; it still uses a fixed three-candle comparison. Equal-level output contains `{ first, second }` pairs, not an average liquidity price. Previous-day liquidity is already implemented and wired after pre-stage repairs, but its available-date behavior is not proof of complete trading-day data. Database/model files and backtesting files remain empty placeholders.
+
+**Recommended next implementation step:** After approval of the next stage's actual scope, define candle availability (including open candles), swing confirmation time and trading-day boundaries, then add deterministic chronological fixtures before extending BOS/CHoCH behavior. Do not add OB/FVG/entry rules or the postponed standard event model during this audit.
+
+Stage 02 remains pending user approval. Full findings and the append-only change record are in [Baseline.md](Baseline.md); repeatable commands and manual browser checks are in [Development.md](Development.md).

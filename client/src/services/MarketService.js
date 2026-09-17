@@ -14,8 +14,8 @@ All of that belongs here.
 The other React components won't change.
 */
 
-import { fetchCandles } from "../api/MarketApi";
+import { fetchCandles } from "../api/marketApi";
 
-export async function getMarketData(symbol, interval, limit) {
-  return await fetchCandles(symbol, interval, limit);
+export async function getMarketData(symbol, interval, limit, signal) {
+  return await fetchCandles(symbol, interval, limit, signal);
 }

@@ -1,3 +1,9 @@
+const {
+  DEFAULT_SYMBOL,
+  DEFAULT_INTERVAL,
+  DEFAULT_LIMIT,
+} = require("../config/MarketConfig");
+
 const validIntervals = [
   "1m",
   "3m",
@@ -17,8 +23,12 @@ const validIntervals = [
 ];
 
 function validateMarketRequest(req, res, next) {
-  const { symbol = "BTCUSDT", interval = "1h", limit = 100 } = req.query;
-  if (!/^[A-Z0-9]+$/.test(symbol)) {
+  const {
+    symbol = DEFAULT_SYMBOL,
+    interval = DEFAULT_INTERVAL,
+    limit = DEFAULT_LIMIT,
+  } = req.query;
+  if (typeof symbol !== "string" || !/^[A-Z0-9]+$/.test(symbol)) {
     return res.status(400).json({
       success: false,
       message: "Invalid symbol format",
@@ -35,17 +45,19 @@ function validateMarketRequest(req, res, next) {
   const parsedLimit = Number(limit);
 
   if (
+    !["string", "number"].includes(typeof limit) ||
     !Number.isInteger(parsedLimit) ||
     parsedLimit <= 0 ||
     parsedLimit > 1000
   ) {
-    return res.statuus(400).json({
+    return res.status(400).json({
       success: false,
-      message: "Limit must be an interval between 1 and 1000.",
+      message: "Limit must be an integer between 1 and 1000.",
     });
   }
 
-  req.query.limit = parsedLimit;
+  // Express 5 exposes req.query through a getter; store normalized input separately.
+  req.marketQuery = { symbol, interval, limit: parsedLimit };
 
   next();
 }

@@ -6,11 +6,11 @@ function detectCHOCH(structure) {
     const current = structure[i];
 
     //Bullish trend becomes bearish
-    if (previous.structure === "HL" && current.structure == "LL") {
+    if (previous.structure === "HL" && current.structure === "LL") {
       chochEvents.push({
         direction: "BEARISH",
         index: current.index,
-        candle: current.current,
+        candle: current.candle,
       });
     }
 

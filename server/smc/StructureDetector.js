@@ -5,23 +5,25 @@ function classifyStructure(swings) {
 
   const structure = [];
 
-  for (let i = 1; i < swings.length; i++) {
-    const previous = swings[i - 1];
-    const current = swings[i];
+  const previousByType = {};
 
-    if (previous.type === "HIGH" && current.type === "HIGH") {
+  for (const current of swings) {
+    const previous = previousByType[current.type];
+
+    if (previous && current.type === "HIGH") {
       structure.push({
         ...current,
         structure: current.candle.high > previous.candle.high ? "HH" : "LH",
       });
     }
 
-    if (previous.type === "LOW" && current.type === "LOW") {
+    if (previous && current.type === "LOW") {
       structure.push({
         ...current,
         structure: current.candle.low > previous.candle.low ? "HL" : "LL",
       });
     }
+    previousByType[current.type] = current;
   }
   return structure;
 }

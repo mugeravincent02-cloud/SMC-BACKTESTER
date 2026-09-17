@@ -17,7 +17,7 @@ export default function TimeframeSelector({ interval, onChange }) {
       <label htmlFor="interval">Timeframe</label>
       <select id="interval" value={interval} onChange={(e) => onChange(e.target.value)}>
         {intervals.map((item) => (
-          <option key={item} value={item}></option>
+          <option key={item} value={item}>{item}</option>
         ))}
       </select>
     </div>

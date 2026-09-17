@@ -9,7 +9,8 @@ const DataCleaner = require("../market/DataCleaner");
 
 async function detectMarketStructure(req, res) {
   try {
-    const raw = await BinanceService.fetchCandles("BTCUSDT", "1h", 100);
+    const { symbol, interval, limit } = req.marketQuery;
+    const raw = await BinanceService.fetchCandles(symbol, interval, limit);
 
     const candles = DataCleaner.cleanCandles(raw);
 
@@ -18,7 +19,7 @@ async function detectMarketStructure(req, res) {
     const structure = classifyStructure(swings);
     const bos = detectBOS(candles, swings);
     const choch = detectCHOCH(structure);
-    const liquidity = detectLiquidity(swings);
+    const liquidity = detectLiquidity(swings, candles);
 
     res.json({
       success: true,

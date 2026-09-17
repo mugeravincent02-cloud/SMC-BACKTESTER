@@ -1,0 +1,349 @@
+You are taking over an existing FX/SMC market analysis and backtesting project.
+
+PROJECT GOAL
+
+The project is a full-stack Smart Money Concept (SMC) market analysis and backtesting application.
+
+The long-term goal is to:
+
+1. Fetch reliable market data.
+2. Clean and normalize candle data.
+3. Detect market structure.
+4. Detect liquidity.
+5. Detect liquidity sweeps.
+6. Detect Order Blocks.
+7. Detect Fair Value Gaps / Imbalances.
+8. Build Points of Interest (POIs).
+9. Combine HTF and LTF analysis.
+10. Validate entries.
+11. Display SMC information on charts.
+12. Backtest the strategy chronologically.
+13. Simulate risk and trade management.
+14. Produce performance statistics.
+15. Build a usable frontend.
+16. Audit the complete engine.
+17. Research possible TradingView integration.
+18. Harden the application for production.
+19. Deploy.
+20. Perform a final release audit.
+
+IMPORTANT WORKING RULES
+
+Do NOT attempt to complete the entire project at once.
+
+Work one stage at a time.
+
+For every stage:
+
+1. Inspect the existing project first.
+2. Read the relevant documentation.
+3. Understand the current implementation.
+4. Preserve working functionality.
+5. Make only the changes required for the current stage.
+6. Test the changes.
+7. Fix problems discovered during testing.
+8. Update the relevant documentation.
+9. Show me exactly what changed.
+10. Show me the tests I should run.
+11. Do NOT continue automatically to the next stage.
+12. Wait for my approval before moving forward.
+
+Do not perform large unnecessary refactors.
+
+Do not replace working architecture simply because you prefer another architecture.
+
+Do not invent undocumented trading rules.
+
+If a strategy rule is ambiguous, identify the ambiguity and ask me before encoding a permanent rule.
+
+SMC STRATEGY BASIS
+
+The strategy follows the principle:
+
+"Identify Liquidity or Become Liquidity."
+
+BUY CONCEPT
+
+A potential buy setup begins after bearish liquidity is taken.
+
+Examples of SSL:
+
+- Swing low
+- Low of Day
+- Previous Day Low
+- Previous Week Low
+- Session low
+- Equal lows
+- Retail support
+- Trendline liquidity
+
+After liquidity is taken, price should react around a bullish Order Block / relevant POI.
+
+Lower timeframe confirmation can include:
+
+- Bullish BOS
+- Bullish CHoCH
+- Supply-to-demand flip
+- Single-candle mitigation
+
+SELL CONCEPT
+
+A potential sell setup is the inverse.
+
+Examples of BSL:
+
+- Swing high
+- High of Day
+- Previous Day High
+- Previous Week High
+- Session high
+- Equal highs
+- Retail resistance
+- Trendline liquidity
+
+After liquidity is taken, price should react around a bearish Order Block / relevant POI.
+
+Lower timeframe confirmation can include:
+
+- Bearish BOS
+- Bearish CHoCH
+- Demand-to-supply flip
+- Single-candle mitigation
+
+TIMEFRAME CONCEPT
+
+HTF is used for:
+
+- Trend
+- Major structure
+- POIs
+- Liquidity context
+
+LTF is used for:
+
+- Confirmation
+- Entry validation
+
+Example:
+
+HTF: 4H / 1H
+LTF: 15M / 5M / 1M
+
+Do not hard-code one timeframe relationship unless the existing strategy documentation explicitly requires it.
+
+ORDER BLOCK WORKING DEFINITION
+
+The current working definition is:
+
+"Order block means where we enter the market for buys and sells. The order block happens when price creates an imbalance and takes out the previous candle high. This happens after a shift in market direction from either a bearish trend to a bullish trend and vice versa."
+
+Do not silently replace this definition with a generic internet definition.
+
+BOS WORKING CONCEPT
+
+A BOS occurs when price breaks a relevant previous structural high or low and closes beyond it.
+
+Example:
+
+Price creates a structural high, retraces, then returns and breaks the previous high and closes above it.
+
+CHoCH
+
+CHoCH represents a meaningful change in market structure and should be treated separately from ordinary continuation BOS.
+
+LIQUIDITY
+
+Important liquidity concepts include:
+
+- Equal Highs
+- Equal Lows
+- Previous Day High
+- Previous Day Low
+- Previous Week High
+- Previous Week Low
+- Session High
+- Session Low
+- Swing Highs
+- Swing Lows
+
+RISK
+
+The strategy documentation describes:
+
+Personal account risk:
+1% to 2% per trade.
+
+Funded account risk:
+0.25% to 1%.
+
+Stops should be based on the setup and relevant structure/liquidity.
+
+The strategy also discusses moving the stop to breakeven after favorable structural progress.
+
+Do not hard-code these values into the engine unless configuration requires them.
+
+CURRENT ARCHITECTURE
+
+Existing backend structure includes approximately:
+
+server/
+  config/
+    smcConfig.js
+  controllers/
+    MarketController.js
+    SMCController.js
+  market/
+    BinanceService.js
+    DataCleaner.js
+  routes/
+    MarketRoutes.js
+    smcRoutes.js
+  smc/
+    SwingDetector.js
+    StructureDetector.js
+    BOSDetector.js
+    CHOCHDetector.js
+    LiquidityDetector.js
+    PreviousDayLiquidityDetector.js
+  shared/helpers/
+    DetectEqualLevels.js
+
+Frontend includes approximately:
+
+client/src/
+  charts/CandleChart.jsx
+  components/layout/
+    DashboardLayout.jsx
+    Navbar.jsx
+    Sidebar.jsx
+  components/market/
+    StatisticsPanel.jsx
+    CandleTable.jsx
+  config/chartConfig.js
+  services/MarketServices.js
+  utils/chartDataMapper.js
+  pages/Home.jsx
+
+Existing documentation:
+
+docs/
+  Agile.md
+  API.md
+  Architecture.md
+  Roadmap.md
+  strategy.md
+
+IMPORTANT EXISTING FUNCTIONALITY
+
+Market data is fetched from Binance.
+
+Candle data is cleaned into:
+
+{
+  time,
+  open,
+  high,
+  low,
+  close,
+  volume
+}
+
+The market API works.
+
+The SMC API currently exists at:
+
+GET /api/smc/swings
+
+The market API is approximately:
+
+GET /api/candles
+
+The frontend already displays market data and a candlestick chart.
+
+The project uses lightweight-charts.
+
+The current lightweight-charts version uses:
+
+createChart()
+
+and:
+
+chart.addSeries(CandlestickSeries, {})
+
+Do not downgrade or replace this API unnecessarily.
+
+KNOWN FIXES THAT MUST NOT BE REINTRODUCED
+
+1. Binance candle arrays must be cleaned before using array methods such as .map().
+
+2. Equal-level detection must push results into the equalLevels array.
+
+Correct:
+
+equalLevels.push({ first, second });
+
+Do NOT push into the numeric tolerance variable.
+
+3. Numeric tolerance must remain numeric.
+
+4. Do not use undefined variables such as candles inside functions that did not receive candles.
+
+5. React chart resize logic must remain inside the appropriate useEffect scope.
+
+6. Candle chart mapping must use:
+
+mapCandlesToChart(candles)
+
+not an undefined singular variable.
+
+7. lightweight-charts v5 uses the current series API already implemented in the project.
+
+8. Do not introduce duplicate imports, duplicate useEffect blocks, or duplicate functions.
+
+IMPORTANT ARCHITECTURAL DECISION
+
+The standard event model is postponed.
+
+Do NOT introduce the final standard event model yet.
+
+The engine should first become stable, understandable, testable, and audited.
+
+The standard event model will be introduced later after the core engine is mature.
+
+GIT WORKFLOW
+
+After each approved stage:
+
+1. Test.
+2. Audit.
+3. Update documentation.
+4. Commit.
+5. Push.
+6. Report the commit.
+7. Wait for approval.
+
+Do not silently move to the next stage.
+
+FIRST TASK
+
+Before changing code:
+
+1. Inspect the entire repository.
+2. Inspect package.json files.
+3. Inspect the server and client structure.
+4. Read:
+   docs/Agile.md
+   docs/API.md
+   docs/Architecture.md
+   docs/Roadmap.md
+   docs/strategy.md
+5. Identify what is currently implemented.
+6. Identify broken or incomplete areas.
+7. Identify duplicate/dead code.
+8. Identify missing tests.
+9. Identify security problems.
+10. Produce a concise baseline report.
+
+DO NOT make major changes yet.
+
+Wait for my approval before implementing Stage 01.

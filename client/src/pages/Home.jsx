@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import CandleChart from "../charts/CandleChart";
 
 import DashboardLayout from "../components/layout/DashboardLayout";
@@ -18,35 +18,39 @@ export default function Home() {
   const [market, setMarket] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const activeRequest = useRef(null);
 
-  async function loadMarket() {
+  const loadMarket = useCallback(async (selection) => {
+    activeRequest.current?.abort();
+    const controller = new AbortController();
+    activeRequest.current = controller;
     setLoading(true);
     setError("");
 
     try {
-      const data = await getMarketData(symbol, interval, limit);
-      setMarket(data);
+      const data = await getMarketData(
+        selection.symbol, selection.interval, selection.limit, controller.signal
+      );
+      if (!controller.signal.aborted) setMarket(data);
     } catch (err) {
-      setError(err.message);
+      if (!controller.signal.aborted) {
+        setError(err.response?.data?.message || err.message);
+      }
     } finally {
-      setLoading(false);
+      if (!controller.signal.aborted) setLoading(false);
     }
-  }
-  useEffect(() => {
-    loadMarket();
   }, []);
 
-  // if (loading) {
-  //   return <h2>Loading market ...</h2>;
-  // }
-  if (error) {
-    return <h2>{error}</h2>;
-  }
+  useEffect(() => {
+    loadMarket({ symbol: "BTCUSDT", interval: "1h", limit: 100 });
+    return () => activeRequest.current?.abort();
+  }, [loadMarket]);
 
   return (
     <DashboardLayout>
-      {loading && <div className="loading-overlay">Loading Market...</div>}
       <Navbar />
+      {loading && <div className="market-status" role="status">Loading Market...</div>}
+      {error && <div className="market-status" role="alert">{error} Try loading the market again.</div>}
       <Sidebar
         symbol={symbol}
         interval={interval}
@@ -55,11 +59,17 @@ export default function Home() {
         setSymbol={setSymbol}
         setInterval={setInterval}
         setLimit={setLimit}
-        loadMarket={loadMarket}
+        loadMarket={() => loadMarket({ symbol, interval, limit })}
       />
-      <CandleChart candles={market?.data || []} />
-      <StatisticalPanel market={market} />
-      <CandleTable candles={market?.data || []} />
+      <section className="chart" aria-label="Candlestick chart">
+        <CandleChart candles={market?.data || []} />
+      </section>
+      <div className="statistics">
+        <StatisticalPanel market={market} />
+      </div>
+      <div className="table">
+        <CandleTable candles={market?.data || []} />
+      </div>
     </DashboardLayout>
   );
 }

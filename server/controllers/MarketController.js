@@ -1,12 +1,6 @@
 const BinanceService = require("../market/BinanceService");
 const DataCleaner = require("../market/DataCleaner");
 
-const {
-  DEFAULT_SYMBOL,
-  DEFAULT_INTERVAL,
-  DEFAULT_LIMIT,
-} = require("../config/MarketConfig");
-
 /**
  * GET /api/candles
  *
@@ -16,11 +10,7 @@ const {
 
 async function getCandles(req, res) {
   try {
-    const {
-      symbol = DEFAULT_SYMBOL,
-      interval = DEFAULT_INTERVAL,
-      limit = DEFAULT_LIMIT,
-    } = req.query;
+    const { symbol, interval, limit } = req.marketQuery;
 
     //Fetch raw market data
     const rawCandles = await BinanceService.fetchCandles(

@@ -3,9 +3,11 @@ import api from "./axios";
 export async function fetchCandles(
   symbol = "BTCUSDT",
   interval = "1h",
-  limit = 1000
+  limit = 100,
+  signal
 ) {
   const response = await api.get("/candles", {
+    signal,
     params: {
       symbol,
       interval,

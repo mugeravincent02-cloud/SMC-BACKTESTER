@@ -1,12 +1,14 @@
 .dashboard-layout {
   display: grid;
-  grid-template-columns: 260px 1fr 300px;
-  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 180px minmax(0, 1fr) 230px;
+  align-content: start;
+  align-items: start;
 
   min-height: 100vh;
 
   gap: 16px;
   padding: 16px;
+  text-align: left;
 }
 
 .navbar {
@@ -18,12 +20,58 @@
 
 .chart {
   grid-column: 2;
+  min-width: 0;
 }
 
-.statisctics {
+.statistics {
   grid-column: 3;
 }
 
 .table {
   grid-column: 1/4;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.market-status {
+  grid-column: 1 / -1;
+}
+
+.sidebar {
+  display: grid;
+  gap: 16px;
+}
+
+.sidebar label {
+  display: block;
+}
+
+.sidebar select,
+.sidebar input,
+.sidebar button {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px;
+}
+
+.table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .dashboard-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dashboard-layout > * {
+    grid-column: 1;
+  }
 }

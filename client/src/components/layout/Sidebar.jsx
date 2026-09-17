@@ -14,7 +14,7 @@ export default function Sidebar({
   loadMarket,
 }) {
   return (
-    <aside>
+    <aside className="sidebar">
       <MarketSelector symbol={symbol} onChange={setSymbol} />
 
       <TimeframeSelector interval={interval} onChange={setInterval} />

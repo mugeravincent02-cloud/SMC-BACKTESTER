@@ -2,13 +2,14 @@
   "name": "smc-backtester",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "directories": {
     "doc": "docs",
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "test": "node --test ../tests/api/*.test.js ../tests/market/*.test.js ../tests/strategy/*.test.js"
   },
   "keywords": [],
   "author": "",
