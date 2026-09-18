@@ -208,3 +208,54 @@ Still missing: real-browser load/change/error/retry/resize/cancellation tests; c
 **Stage outcome:** Audit work and required runtime checks are complete with the limitations recorded above. Stage 02 is not implemented and requires user approval. Commit/push finalization follows the Handoff workflow; its actual result is recorded after the Git operations.
 
 **Stage 01 finalization verification:** Root-index removal of `server/.env` succeeded; its local SHA-256 was unchanged before/after the operation, `git ls-files` no longer lists it, and the ignore rule matches it. A limited credential-pattern scan of the staged non-lockfile contents returned no findings; no vendor files were staged. The entire pre-Stage-01 Baseline.md prefix (20,946 bytes, SHA-256 `d0c6d390b25c91c6f56c7fab10ced3fcaabe778a7d751b2fbd311ebac4ad58a7`) remains unchanged. The stage commit includes the previously uncommitted authorized repair work and this audit so the documented baseline is reproducible. Exact commit/push identifiers and publication success are reported in the completion response and Git history, rather than embedding a self-referential commit hash in this file.
+
+---
+
+## Stage 02 — Market-data audit and corrections, 2026-09-18
+
+**When/authorization:** Work began approximately 01:54 Africa/Kampala (UTC+03:00) on 2026-09-18 after the user's Stage02 request. Stage02.txt restricts work to the market-data foundation and explicitly requires stopping without a commit/push. The earlier 42-file repair/audit commit is not part of this new diff.
+
+**Inspection:** Read the required current documentation and audited BinanceService, DataCleaner, MarketController, MarketRoutes, ValidateMarketRequest, MarketConfig and related tests. The fixed Binance Spot URL, query names, timestamp units and raw candle positions were checked against the [official Binance REST specification](https://github.com/binance/binance-spot-api-docs/blob/master/rest-api.md#klinecandlestick-data). Existing application defaults and interval choices were retained.
+
+### Factual corrections to the previous baseline
+
+- Malformed-data rejection previously missed sparse in-memory arrays: `cleanCandles(new Array(1))` serialized as `[null]` because Array.map skipped the absent entry. Ordinary JSON cannot represent a sparse array, but direct callers or an adapter could still supply one. Missing entries are now validated and rejected.
+- MarketController previously returned arbitrary dependency exception messages. A targeted test returned a private message and stack-like text verbatim. Its catch block now always returns the existing generic market-data failure message.
+- BinanceService previously accepted non-array response bodies until a downstream cleaner rejected them, and its error logger could itself throw when a rejection value was null/undefined. Both cases now fail at the service boundary with the fixed public error.
+- An actual Axios response timeout is now tested using a stalled loopback HTTP server, taking approximately eight seconds. This improves on the earlier option-only check; DNS/TLS/network-path behavior against a stalled real Binance server is not claimed.
+
+### What changed, where, how and why
+
+| File | Purpose and implementation |
+| --- | --- |
+| `server/market/BinanceService.js` | Use existing MarketConfig defaults; reject missing/non-array bodies; retain genuine empty arrays; sanitize all rejections without reading untrusted error properties. Fixed URL and 8,000 ms timeout unchanged. |
+| `server/market/DataCleaner.js` | Use Array.from with the existing row validator so absent array entries cannot escape validation. All existing numeric/OHLC/order checks and reject-rather-than-repair behavior remain. |
+| `server/controllers/MarketController.js` | Replace arbitrary exception-message output with the existing fixed public message and generic logging. Preserve HTTP 500 and the existing error envelope. |
+| `tests/market/data.test.js` | Add nine focused checks covering numeric conversion, invalid/missing fields/timestamps, sparse data, shared defaults, empty/malformed responses, unusual rejections and real timeout behavior. Tighten the original timeout assertion to exactly 8,000 ms. |
+| `tests/api/market-pipeline.test.js` | Add 11 complete-pipeline checks that stub only Axios, retaining real route/middleware/controller/service/cleaner execution. Cover all required success, validation, empty, malformed, ordering, provider-error and unexpected controller-failure cases. |
+| `docs/API.md` | Append the actual market-data request/success/empty/error contract, compatibility choices, source verification and test evidence. |
+| `docs/Architecture.md` | Append current provider-to-response flow, failure boundaries, test isolation and market-data limitations. |
+| `docs/Agile.md` | Update the current checkpoint and append stage scope, changes, test results and audit-pending status. |
+| `docs/Roadmap.md` | Update the current checkpoint and append the actual market-data state, remaining scope and stop condition. |
+| `docs/Baseline.md` | Append this dated correction and audit record; previous text remains unchanged. |
+
+MarketRoutes, ValidateMarketRequest and MarketConfig needed no edits: tests confirm their existing wiring, accepted inputs and normalization. No client source, dependency manifest/lockfile, environment file, SMC controller/detector or strategy test changed in this stage. No new packages were installed. The shared service/cleaner still feed the SMC endpoint, but no strategy algorithm or event model changed.
+
+### Tests and observed results
+
+- Before implementation: the existing 22 backend tests passed. Five selected new regression tests failed against the old implementation, reproducing missing-row acceptance, malformed envelope acceptance, unsafe non-Error rejection handling and controller message exposure.
+- After implementation: `npm.cmd test` and `npm.cmd --prefix server test` each passed **42 backend tests**. They run the same suite and are not counted twice. Twenty tests were added: nine cleaner/provider checks plus 11 complete-pipeline checks.
+- `npm.cmd --prefix client test`: **4/4 pass**. `npm.cmd --prefix client run lint` and `npm.cmd --prefix client run build`: pass. These were API-consumer regression checks; no browser interaction is claimed.
+- Oxlint on the three modified runtime files and two stage test files: clean after expressing intentional sparse fixtures with explicit deletion instead of sparse-array literals. The two affected sparse-array tests were checked again after that fixture-only edit.
+- Live backend on temporary port 5015: BTCUSDT/1h/100 returned HTTP 200 with 100 validated records; ETHUSDT/5m/2 returned HTTP 200 with two records. Invalid symbol, interval and limit returned their exact 400 JSON messages. `NOTAREALSYMBOL` passed format validation, was rejected upstream and returned the fixed 500 message without provider details.
+- Empty/malformed datasets and provider 400/429/500/timeout/network failures were exercised using isolated fixtures, not by inducing real provider failures. A separate actual stalled local HTTP response confirmed Axios timeout enforcement with the production 8,000 ms option unchanged.
+
+### Assumptions retained and unresolved market-data work
+
+- A genuine provider [] means a successful empty result; missing/non-array bodies are failures. The existing 200/400/500 categories and `{ success, message }` error keys remain; no new response schema or error classification is introduced.
+- Limits still use Number conversion, including existing forms such as exponent/hex/whitespace numeric strings that normalize to an integer. The 15-interval allowlist and uppercase ASCII alphanumeric symbol rule remain application choices; no exchange-wide symbol catalogue or new interval support is added.
+- Positive finite prices, nonnegative finite volume, valid millisecond timestamps and strictly increasing order remain the supported spot-data assumptions. Fewer rows than requested are allowed. No sorting, filtering, duplicate removal or synthetic rows are introduced.
+- Direct service callers must supply validated inputs; routed callers obtain validation through middleware. Error logs in the changed catch blocks are deliberately generic, so detailed structured diagnostics remain future work.
+- Open/current candles, gap handling, historical pagination, day/session coverage, decimal precision, retry/backoff/rate-limit coordination, cancellation propagation to Binance and detailed upstream error statuses remain unresolved. Generic failures still map to 500, including valid-format but unlisted symbols. Errors outside MarketController's handler (including pre-route Express errors) and unrelated controller error handling are outside this stage.
+
+**Status:** Implementation/test work is ready for the user's audit. Working-tree changes are intentionally uncommitted, alongside the user's pre-existing untracked stage instruction files. Nothing was staged, committed or pushed. Stage 03 has not started.

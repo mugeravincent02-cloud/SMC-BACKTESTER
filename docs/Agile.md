@@ -1,6 +1,6 @@
 # All sprint history lies within here.
 
-> Current checkpoint (2026-09-18): Stage 01 baseline audit is complete with the limitations below. Earlier sprint notes are historical records, not the current implementation status. Stage 02 is not authorized or implemented.
+> Current checkpoint (2026-09-18): Stage 02 market-data work is implemented and tested locally, pending user audit. Earlier sprint/stage notes are historical records. No Stage 02 commit/push or Stage 03 work is authorized yet.
 
 Project Workflow
 
@@ -100,3 +100,17 @@ Completed
 **Definition-of-done assessment:** Baseline inspection and requested runtime checks are complete. Browser behavior and trading correctness are explicitly unverified; they are not silently counted as passing. No further application-code blocker was found and no strategy rule was changed in Stage 01.
 
 **Audit trail and next step:** See the appended Stage 01 section in [Baseline.md](Baseline.md) for evidence, missing tests, security details, exact change attribution and final Git outcome. Recommend agreeing candle availability/day-boundary and structure-confirmation rules, then testing them in the next approved stage. Wait for the user's Stage 02 instructions before implementation.
+
+## Stage 02 — Market data foundation, 2026-09-18
+
+**Scope:** Audited the provider-to-API pipeline, its configuration, route/validation wiring and existing tests. Kept the eight-second timeout, market choices, success/error envelopes, empty-array behavior and rejection of malformed/unordered data. Did not alter SMC strategy or frontend code.
+
+**Changes:** BinanceService now shares existing defaults, rejects non-array responses and safely handles non-Error rejections. DataCleaner now rejects sparse missing rows. MarketController returns a fixed message for caught failures instead of reflecting dependency exception messages. Three runtime files changed; MarketRoutes, ValidateMarketRequest and MarketConfig were verified without edits.
+
+**Evidence:** The existing 22 backend tests passed before changes. Five targeted regressions failed against the old implementation, confirming sparse-row acceptance, malformed response acceptance, unsafe rejection handling and exception-message exposure. After fixes, the suite has 42 passing backend tests: 20 added checks, including 11 full-pipeline tests and nine additional cleaner/provider/timeout tests. Root/server commands run the same suite, not separate sets. Four frontend tests, frontend lint/build and affected-file backend lint also pass. Test-only sparse fixtures were expressed explicitly to remove lint warnings.
+
+**Live results:** BTCUSDT/1h/100 and ETHUSDT/5m/2 returned valid 200 responses; invalid symbol/interval/limit returned 400 JSON; an unlisted but syntactically valid symbol returned the sanitized 500 message. Empty/malformed/provider-failure cases were verified with isolated fixtures; the unchanged Axios timeout was exercised against a stalled local server.
+
+**Documentation:** Updated API.md and Architecture.md with current market-data behavior; added this progress record and a Roadmap update; appended factual corrections/evidence to Baseline.md without deleting history. Development.md and strategy documentation were read but not rewritten.
+
+**Outcome:** Implementation and verification are complete for audit. Remaining market-data work includes open-candle/gap/day policy, pagination, retry/backoff and richer provider-error classification. No commit/push or Stage 03 implementation; wait for the user's audit and explicit approval.

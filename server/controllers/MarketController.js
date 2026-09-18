@@ -5,7 +5,7 @@ const DataCleaner = require("../market/DataCleaner");
  * GET /api/candles
  *
  * Fetch market candles and return them in the
- * application's standard cccandle format.
+ * application's standard candle format.
  */
 
 async function getCandles(req, res) {
@@ -30,12 +30,12 @@ async function getCandles(req, res) {
       total: cleanedCandles.length,
       data: cleanedCandles,
     });
-  } catch (error) {
-    console.error(error);
+  } catch {
+    console.error("Market data request failed.");
 
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Unavailable to fetch market data.",
     });
   }
 }

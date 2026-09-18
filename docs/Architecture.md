@@ -187,3 +187,32 @@ SMC Engine
 ├── LiquidityDetector
 │ ├── Equal Highs
 │ └── Equal Lows
+
+## Stage 02 — Market-data boundary, 2026-09-18
+
+Current request/response flow:
+
+```text
+GET /api/candles
+  -> MarketRoutes
+  -> ValidateMarketRequest (400 JSON on invalid input)
+  -> req.marketQuery { symbol, interval, numeric limit }
+  -> MarketController
+  -> BinanceService -> fixed Binance HTTPS endpoint (8,000 ms timeout)
+  <- raw provider array (including valid [])
+  -> DataCleaner (validate every row; reject malformed or unordered input)
+  -> MarketController -> existing success envelope / sanitized 500 envelope
+```
+
+Responsibilities remain separated:
+
+- **Validation middleware:** Applies existing MarketConfig defaults and existing symbol/interval/limit rules before an outbound request. The route wiring was verified and did not need modification.
+- **BinanceService:** Uses the shared defaults, fixed URL and unchanged timeout. Returns only an array; missing/non-array response bodies and request failures throw the fixed public market-data error. No credentials, configurable upstream destination, retry loop or record-cleaning logic was added.
+- **DataCleaner:** Converts the first six raw values into `{ time, open, high, low, close, volume }`, checks numeric/OHLC/timestamp validity and strictly increasing order. It now visits sparse-array entries instead of allowing holes to serialize as null. Genuine empty arrays remain empty. It neither repairs nor partially accepts invalid datasets.
+- **MarketController:** Coordinates validated input, provider access and cleaning. Success metadata and response keys remain unchanged. Any caught failure produces the same generic 500 response; raw dependency messages/stacks are not reflected to clients. The changed service/controller catch blocks also log generic messages rather than raw errors.
+
+`SMCController` also consumes BinanceService/DataCleaner, so it benefits from their data-boundary validation. No SMC controller, detector, strategy rule or standard event model changed in Stage 02. Direct service callers are expected to supply validated parameters; HTTP requests obtain that validation from the middleware.
+
+Tests now include the real route, middleware, controller, service and cleaner with only Axios replaced at the provider boundary. A separate stalled loopback server verifies the real Axios eight-second timeout; it is a test-only destination and does not change production configuration. Existing detector and frontend suites remain regression checks.
+
+Still outside this stage: historical pagination, open-candle exclusion, gap/day/session policies, decimal-arithmetic changes, retries/backoff, rate-limit coordination, full production security, and the trading/backtesting engines. See API.md for the actual market-data contract and Baseline.md for the append-only audit.

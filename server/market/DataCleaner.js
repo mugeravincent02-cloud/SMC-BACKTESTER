@@ -56,7 +56,8 @@ function cleanCandles(candles) {
       `Expected an array of candles but received ${typeof candles}`
     );
   }
-  const cleaned = candles.map(cleanCandle);
+  // Array.from visits missing entries too; map would preserve holes as null in JSON.
+  const cleaned = Array.from(candles, cleanCandle);
   for (let i = 1; i < cleaned.length; i++) {
     if (cleaned[i].time <= cleaned[i - 1].time) {
       throw new Error("Invalid candles: timestamps must be unique and increasing.");

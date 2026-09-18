@@ -1,6 +1,6 @@
 # 1. Project Vision
 
-> Current status (2026-09-18): Stage 01 baseline audit completed with recorded limitations. The original sprint/phase lists below are preserved history. The current implementation matrix at the end supersedes their status claims. Stage 02 has not started.
+> Current status (2026-09-18): Stage 02 market-data implementation and verification are complete locally, pending user audit. Earlier sprint/phase and Stage 01 entries below are preserved history. The Stage 02 update at the end is the current market-data status. No Stage 02 commit/push or Stage 03 work has occurred.
 
     Current Sprint
 
@@ -204,3 +204,17 @@ Phase 4
 **Recommended next implementation step:** After approval of the next stage's actual scope, define candle availability (including open candles), swing confirmation time and trading-day boundaries, then add deterministic chronological fixtures before extending BOS/CHoCH behavior. Do not add OB/FVG/entry rules or the postponed standard event model during this audit.
 
 Stage 02 remains pending user approval. Full findings and the append-only change record are in [Baseline.md](Baseline.md); repeatable commands and manual browser checks are in [Development.md](Development.md).
+
+## Stage 02 update — Market data foundation, 2026-09-18
+
+| Area | Current result |
+| --- | --- |
+| Provider contract | Fixed Binance Spot kline endpoint, existing configurable symbol/interval/limit and 8,000 ms timeout verified. Shared defaults used by service. Non-array bodies rejected; genuine [] retained. |
+| Cleaning | Numeric OHLCV and chronological validation retained. Missing/sparse rows now reject the dataset instead of producing null records. No sorting, dropping or synthetic candles. |
+| API contract | Existing metadata/shape and 200/400/500 categories preserved. All caught MarketController failures now return one sanitized public message. |
+| Route/validation | Existing middleware ordering, 15-interval allowlist, configurable uppercase alphanumeric symbols and numeric limits 1–1000 verified without changes. |
+| Tests | 42 backend tests pass, including 20 added market-data checks. Four existing frontend tests pass; lint/build pass. Root/server commands count the same backend tests. |
+| Market-data limitations | No open-candle exclusion, gap/day/session policy, pagination, retry/backoff or richer upstream error statuses. Numeric conversion still uses JavaScript Number. |
+| Other engine work | SMC logic, entry validation, OB/FVG/POI, backtesting, risk/statistics and the postponed event model remain outside this stage. |
+
+The actual request/error contract is documented in API.md, and the data flow in Architecture.md. Baseline.md preserves the findings and repair evidence. Stage 02 is awaiting audit and explicit commit/push approval. Stage 03 must not begin automatically.
