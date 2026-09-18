@@ -2,9 +2,12 @@ const { it, mock } = require("node:test");
 const assert = require("node:assert/strict");
 const { createServer } = require("node:http");
 const { once } = require("node:events");
+const { createRequire } = require("node:module");
 const { cleanCandles } = require("../../server/market/DataCleaner");
 const { fetchCandles } = require("../../server/market/BinanceService");
-const axios = require("axios");
+// Stub the provider's Axios instance even when server dependencies are installed separately.
+const requireFromService = createRequire(require.resolve("../../server/market/BinanceService"));
+const axios = requireFromService("axios");
 
 const row = [Date.UTC(2026, 0, 1), "10", "12", "8", "11", "20"];
 
