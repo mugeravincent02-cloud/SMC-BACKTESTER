@@ -1,7 +1,10 @@
 const { after, before, beforeEach, describe, it, mock } = require("node:test");
 const assert = require("node:assert/strict");
 const { once } = require("node:events");
-const axios = require("axios");
+const { createRequire } = require("node:module");
+// Stub the provider's Axios instance even when server dependencies are installed separately.
+const requireFromService = createRequire(require.resolve("../../server/market/BinanceService"));
+const axios = requireFromService("axios");
 const DataCleaner = require("../../server/market/DataCleaner");
 const app = require("../../server/app");
 
