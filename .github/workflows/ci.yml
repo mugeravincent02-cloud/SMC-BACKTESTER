@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Tests, lint and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            client/package-lock.json
+      - name: Install backend dependencies
+        run: npm ci
+      - name: Test backend
+        run: npm test
+      - name: Install client dependencies
+        run: npm --prefix client ci
+      - name: Test client
+        run: npm --prefix client test
+      - name: Lint client
+        run: npm --prefix client run lint
+      - name: Build client
+        run: npm --prefix client run build
