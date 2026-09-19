@@ -17,8 +17,8 @@ async function detectMarketStructure(req, res) {
     const swings = detectSwings(candles);
 
     const structure = classifyStructure(swings);
-    const bos = detectBOS(candles, swings);
-    const choch = detectCHOCH(structure);
+    const bos = detectBOS(candles, swings, structure);
+    const choch = detectCHOCH(candles, structure);
     const liquidity = detectLiquidity(swings, candles);
 
     res.json({

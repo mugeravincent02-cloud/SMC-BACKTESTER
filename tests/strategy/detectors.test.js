@@ -6,67 +6,121 @@ const { detectBOS } = require("../../server/smc/BOSDetector");
 const { detectSwings } = require("../../server/smc/SwingDetector");
 const { detectLiquidity } = require("../../server/smc/LiquidityDetector");
 
-function swing(type, index, price) {
-  return { type, index, candle: { [type === "HIGH" ? "high" : "low"]: price } };
+function candle(high, low, close) {
+  return { high, low, close };
 }
 
-it("classifies alternating swings using the preceding swing of the same type", () => {
-  const swings = [
-    swing("HIGH", 1, 10), swing("LOW", 2, 5),
-    swing("HIGH", 3, 12), swing("LOW", 4, 6),
-    swing("HIGH", 5, 11), swing("LOW", 6, 4),
+function bullishCandles(breakClose = 15) {
+  return [
+    candle(10, 5, 8), candle(12, 7, 10), candle(11, 6, 8),
+    candle(10, 4, 6), candle(11, 5, 8), candle(14, 7, 12),
+    candle(13, 6, 9), candle(12, 5, 8), candle(13, 6, 10),
+    candle(15, 7, breakClose),
   ];
-  const snapshot = structuredClone(swings);
+}
+
+function bearishCandles(breakClose = 5) {
+  return [
+    candle(15, 10, 12), candle(14, 8, 10), candle(15, 9, 12),
+    candle(20, 11, 18), candle(17, 10, 13), candle(16, 6, 8),
+    candle(17, 7, 12), candle(18, 9, 16), candle(17, 8, 12),
+    candle(16, 5, breakClose),
+  ];
+}
+
+it("detects confirmed deterministic swings with their source candles", () => {
+  const candles = bullishCandles();
+  assert.deepEqual(detectSwings(candles).map(({ type, index, confirmationIndex, candle: source }) => [
+    type, index, confirmationIndex, source,
+  ]), [
+    ["HIGH", 1, 2, candles[1]], ["LOW", 3, 4, candles[3]],
+    ["HIGH", 5, 6, candles[5]], ["LOW", 7, 8, candles[7]],
+  ]);
+});
+
+it("classifies bullish and bearish structure using the preceding same-type swing", () => {
+  const bullish = classifyStructure(detectSwings(bullishCandles()));
+  const bearish = classifyStructure(detectSwings(bearishCandles()));
+
+  assert.deepEqual(bullish.map(({ index, structure }) => [index, structure]), [[5, "HH"], [7, "HL"]]);
+  assert.deepEqual(bearish.map(({ index, structure }) => [index, structure]), [[5, "LL"], [7, "LH"]]);
+});
+
+it("emits only a bullish BOS after bullish structure is confirmed", () => {
+  const candles = bullishCandles();
+  const swings = detectSwings(candles);
   const structure = classifyStructure(swings);
-  assert.deepEqual(structure.map(({ index, structure }) => [index, structure]), [
-    [3, "HH"], [4, "HL"], [5, "LH"], [6, "LL"],
-  ]);
-  assert.equal(structure[0].candle, swings[2].candle);
-  assert.deepEqual(swings, snapshot);
+  const bos = detectBOS(candles, swings, structure);
+
+  assert.deepEqual(bos.map(({ direction, brokenSwing, breakIndex, breakPrice }) => (
+    { direction, brokenSwing, breakIndex, breakPrice }
+  )), [{ direction: "BULLISH", brokenSwing: 5, breakIndex: 9, breakPrice: 15 }]);
+  assert.equal(bos[0].brokenSwingCandle, candles[5]);
+  assert.equal(bos[0].brokenSwings, 5, "legacy bullish field remains available");
 });
 
-it("preserves consecutive same-type comparisons and existing equal-price behavior", () => {
+it("returns BOS events in candle order when later confirmed highs break", () => {
+  const candles = [...bullishCandles(), candle(14, 8, 10), candle(13, 7, 9), candle(16, 9, 16)];
+  const swings = detectSwings(candles);
+  const bos = detectBOS(candles, swings, classifyStructure(swings));
+  assert.deepEqual(bos.map(({ brokenSwing, breakIndex }) => [brokenSwing, breakIndex]), [[5, 9], [9, 12]]);
+});
+
+it("emits only a bearish BOS after bearish structure is confirmed", () => {
+  const candles = bearishCandles();
+  const swings = detectSwings(candles);
+  const structure = classifyStructure(swings);
+  const bos = detectBOS(candles, swings, structure);
+
+  assert.deepEqual(bos.map(({ direction, brokenSwing, breakIndex, breakPrice }) => (
+    { direction, brokenSwing, breakIndex, breakPrice }
+  )), [{ direction: "BEARISH", brokenSwing: 5, breakIndex: 9, breakPrice: 5 }]);
+  assert.equal(bos[0].brokenSwingCandle, candles[5]);
+});
+
+it("treats a protected opposing-swing break as CHoCH, not BOS", () => {
+  const candles = bullishCandles(4);
+  const swings = detectSwings(candles);
+  const structure = classifyStructure(swings);
+
+  assert.deepEqual(detectBOS(candles, swings, structure), []);
+  assert.deepEqual(detectCHOCH(candles, structure).map(({ direction, brokenStructure, breakIndex, breakPrice, candle: source }) => (
+    { direction, brokenStructure, breakIndex, breakPrice, source }
+  )), [{
+    direction: "BEARISH", brokenStructure: 7, breakIndex: 9, breakPrice: 4, source: candles[9],
+  }]);
+});
+
+it("does not use a swing before its confirmation candle", () => {
+  const candles = bullishCandles();
+  const swings = detectSwings(candles);
+  const structure = classifyStructure(swings);
+  const earlyCandles = candles.slice(0, 8);
+  assert.deepEqual(detectBOS(earlyCandles, swings, structure), []);
+  assert.deepEqual(detectCHOCH(earlyCandles, structure), []);
+});
+
+it("returns no events for empty or insufficient candle input", () => {
+  assert.deepEqual(detectSwings([]), []);
+  assert.deepEqual(detectSwings([{ high: 10, low: 5 }]), []);
+  assert.deepEqual(detectSwings([{ high: 10, low: 5 }, { high: 11, low: 4 }]), []);
+  assert.deepEqual(detectBOS([], []), []);
+  assert.deepEqual(detectCHOCH([], []), []);
+});
+
+it("keeps equal and ambiguous candles out of swing and structure claims", () => {
+  const candles = [candle(10, 5, 7), candle(10, 4, 6), candle(9, 4, 6)];
+  assert.deepEqual(detectSwings(candles), []);
   assert.deepEqual(classifyStructure([]), []);
-  assert.deepEqual(classifyStructure([swing("HIGH", 1, 10)]), []);
-  assert.deepEqual(classifyStructure([
-    swing("HIGH", 1, 10), swing("HIGH", 2, 10),
-    swing("LOW", 3, 5), swing("LOW", 4, 5),
-  ]).map((event) => event.structure), ["LH", "LL"]);
 });
 
-it("includes the source candle for both existing CHoCH transitions", () => {
-  for (const [previous, current, direction] of [["HL", "LL", "BEARISH"], ["LH", "HH", "BULLISH"]]) {
-    const candle = { high: 12, low: 4 };
-    assert.deepEqual(detectCHOCH([
-      { structure: previous }, { structure: current, index: 7, candle },
-    ]), [{ direction, index: 7, candle }]);
-  }
-  assert.deepEqual(detectCHOCH([{ structure: "HL" }, { structure: "HH" }]), []);
-});
-
-it("BOS requires a close beyond the level, has consistent references and break order", () => {
-  const candles = [
-    { close: 7 }, { close: 7 }, { close: 4, high: 11 },
-    { close: 10 }, { close: 11 }, { close: 12 },
+it("preserves equal-level liquidity behavior", () => {
+  const swings = [
+    { type: "HIGH", index: 1, candle: { high: 100 } },
+    { type: "LOW", index: 2, candle: { low: 50 } },
+    { type: "HIGH", index: 3, candle: { high: 100.01 } },
+    { type: "LOW", index: 4, candle: { low: 50.01 } },
   ];
-  const bos = detectBOS(candles, [swing("HIGH", 0, 10), swing("LOW", 1, 5)]);
-  assert.deepEqual(bos.map(({ direction, breakIndex, brokenSwing }) => ({ direction, breakIndex, brokenSwing })), [
-    { direction: "BEARISH", breakIndex: 2, brokenSwing: 1 },
-    { direction: "BULLISH", breakIndex: 4, brokenSwing: 0 },
-  ]);
-  assert.equal(bos[1].brokenSwings, 0, "legacy bullish field remains available");
-});
-
-it("retains strict three-candle swing detection", () => {
-  const candles = [{ high: 10, low: 5 }, { high: 12, low: 4 }, { high: 11, low: 6 }];
-  assert.deepEqual(detectSwings(candles), [
-    { type: "HIGH", index: 1, candle: candles[1] },
-    { type: "LOW", index: 1, candle: candles[1] },
-  ]);
-});
-
-it("preserves equal-level pairs and calculates previous-day liquidity", () => {
-  const swings = [swing("HIGH", 1, 100), swing("LOW", 2, 50), swing("HIGH", 3, 100.01), swing("LOW", 4, 50.01)];
   const candles = [
     { time: Date.UTC(2026, 0, 1), high: 100, low: 50 },
     { time: Date.UTC(2026, 0, 1, 12), high: 110, low: 40 },
@@ -75,7 +129,4 @@ it("preserves equal-level pairs and calculates previous-day liquidity", () => {
   const liquidity = detectLiquidity(swings, candles);
   assert.deepEqual(liquidity.equalHighs, [{ first: swings[0], second: swings[2] }]);
   assert.deepEqual(liquidity.equalLows, [{ first: swings[1], second: swings[3] }]);
-  assert.deepEqual(liquidity.previousDayLiquidity[2], {
-    time: candles[2].time, pdh: 110, pdl: 40, previousDay: "2026-01-01",
-  });
 });

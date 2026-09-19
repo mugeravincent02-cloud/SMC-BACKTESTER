@@ -1,6 +1,6 @@
 # All sprint history lies within here.
 
-> Current checkpoint (2026-09-18): Stage 02 market-data work is implemented and tested locally, pending user audit. Earlier sprint/stage notes are historical records. No Stage 02 commit/push or Stage 03 work is authorized yet.
+> Current checkpoint (2026-09-19): Stage 03 market-structure work is implemented and verified locally. Earlier sprint/stage notes are historical records.
 
 Project Workflow
 
@@ -114,3 +114,13 @@ Completed
 **Documentation:** Updated API.md and Architecture.md with current market-data behavior; added this progress record and a Roadmap update; appended factual corrections/evidence to Baseline.md without deleting history. Development.md and strategy documentation were read but not rewritten.
 
 **Outcome:** Implementation and verification are complete for audit. Remaining market-data work includes open-candle/gap/day policy, pagination, retry/backoff and richer provider-error classification. No commit/push or Stage 03 implementation; wait for the user's audit and explicit approval.
+
+## Stage 03 — Market structure engine, 2026-09-19
+
+**Goal:** Make the existing market-structure layer deterministic and safe for chronological replay.
+
+**Completed:** Added swing confirmation timing, established-trend state, latest-level BOS and protected-swing CHoCH behavior. Replaced heuristic CHoCH tests with deterministic candle fixtures and added empty, insufficient, equality, reference and availability coverage.
+
+**Verification:** `node --test tests/strategy/*.test.js` passes 10 of 10 tests. After a clean root `npm ci`, the full suite passes 46 of 46 tests.
+
+**Out of scope:** Stage 04 and later strategy modules, open-candle policy, and backtesting behavior.

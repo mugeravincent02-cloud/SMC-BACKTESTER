@@ -1,6 +1,6 @@
 # 1. Project Vision
 
-> Current status (2026-09-18): Stage 02 market-data implementation and verification are complete locally, pending user audit. Earlier sprint/phase and Stage 01 entries below are preserved history. The Stage 02 update at the end is the current market-data status. No Stage 02 commit/push or Stage 03 work has occurred.
+> Current status (2026-09-19): Stage 03 market-structure implementation and verification are complete locally. Earlier sprint/phase and Stage 01/02 entries below are preserved history.
 
     Current Sprint
 
@@ -218,3 +218,7 @@ Stage 02 remains pending user approval. Full findings and the append-only change
 | Other engine work | SMC logic, entry validation, OB/FVG/POI, backtesting, risk/statistics and the postponed event model remain outside this stage. |
 
 The actual request/error contract is documented in API.md, and the data flow in Architecture.md. Baseline.md preserves the findings and repair evidence. Stage 02 is awaiting audit and explicit commit/push approval. Stage 03 must not begin automatically.
+
+## Stage 03 update — Market structure engine, 2026-09-19
+
+Stage 03 implements deterministic three-candle swings with an explicit confirmation index, same-type HH/LH/HL/LL classification, close-based BOS in an established trend, and protected-swing CHoCH. The strategy tests cover bullish and bearish structures, reversal/CHoCH, bullish and bearish BOS, empty/insufficient input, equal/ambiguous candles, indexes, source-candle references, confirmation availability, and chronological ordering. No Stage 04 work is included.
