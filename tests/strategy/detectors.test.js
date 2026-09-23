@@ -5,6 +5,7 @@ const { detectCHOCH } = require("../../server/smc/CHOCHDetector");
 const { detectBOS } = require("../../server/smc/BOSDetector");
 const { detectSwings } = require("../../server/smc/SwingDetector");
 const { detectLiquidity } = require("../../server/smc/LiquidityDetector");
+const { detectOrderBlocks } = require("../../server/smc/OrderBlockDetector");
 
 function candle(high, low, close) {
   return { high, low, close };
@@ -470,5 +471,149 @@ it("records failed sweeps without reclaim confirmation", () => {
         confirmationIndex: null,
       },
     ],
+  );
+});
+
+it("detects bullish and bearish order blocks after a directional shift", () => {
+  const candles = [
+    {
+      time: Date.UTC(2026, 0, 1, 0),
+      open: 100,
+      high: 108,
+      low: 97,
+      close: 103,
+    },
+    { time: Date.UTC(2026, 0, 1, 1), open: 103, high: 106, low: 95, close: 99 },
+    { time: Date.UTC(2026, 0, 1, 2), open: 99, high: 112, low: 98, close: 110 },
+    {
+      time: Date.UTC(2026, 0, 1, 3),
+      open: 110,
+      high: 115,
+      low: 106,
+      close: 111,
+    },
+    {
+      time: Date.UTC(2026, 0, 1, 4),
+      open: 111,
+      high: 120,
+      low: 109,
+      close: 119,
+    },
+    {
+      time: Date.UTC(2026, 0, 1, 5),
+      open: 119,
+      high: 122,
+      low: 116,
+      close: 118,
+    },
+    {
+      time: Date.UTC(2026, 0, 1, 6),
+      open: 118,
+      high: 121,
+      low: 106,
+      close: 108,
+    },
+    {
+      time: Date.UTC(2026, 0, 1, 7),
+      open: 108,
+      high: 109,
+      low: 100,
+      close: 102,
+    },
+    { time: Date.UTC(2026, 0, 1, 8), open: 102, high: 104, low: 92, close: 94 },
+    { time: Date.UTC(2026, 0, 1, 9), open: 94, high: 96, low: 88, close: 90 },
+  ];
+
+  const blocks = detectOrderBlocks(candles);
+
+  assert.deepEqual(
+    blocks.map(({ direction, zoneHigh, zoneLow, index, candleIndex }) => ({
+      direction,
+      zoneHigh,
+      zoneLow,
+      index,
+      candleIndex,
+    })),
+    [
+      {
+        direction: "BULLISH",
+        zoneHigh: 112,
+        zoneLow: 98,
+        index: 2,
+        candleIndex: 2,
+      },
+      {
+        direction: "BEARISH",
+        zoneHigh: 121,
+        zoneLow: 106,
+        index: 6,
+        candleIndex: 6,
+      },
+    ],
+  );
+});
+
+it("ignores invalid order-block patterns and insufficient candle history", () => {
+  assert.deepEqual(
+    detectOrderBlocks([
+      { time: 1, open: 10, high: 12, low: 9, close: 11 },
+      { time: 2, open: 11, high: 13, low: 10, close: 12 },
+      { time: 3, open: 12, high: 14, low: 11, close: 13 },
+    ]),
+    [],
+  );
+
+  assert.deepEqual(detectOrderBlocks([]), []);
+  assert.deepEqual(
+    detectOrderBlocks([{ time: 1, open: 10, high: 12, low: 8, close: 11 }]),
+    [],
+  );
+});
+
+it("does not create overlapping order-block zones", () => {
+  const candles = [
+    {
+      time: Date.UTC(2026, 0, 1, 0),
+      open: 100,
+      high: 103,
+      low: 96,
+      close: 101,
+    },
+    { time: Date.UTC(2026, 0, 1, 1), open: 101, high: 104, low: 95, close: 97 },
+    { time: Date.UTC(2026, 0, 1, 2), open: 97, high: 110, low: 96, close: 108 },
+    {
+      time: Date.UTC(2026, 0, 1, 3),
+      open: 108,
+      high: 111,
+      low: 105,
+      close: 110,
+    },
+    {
+      time: Date.UTC(2026, 0, 1, 4),
+      open: 110,
+      high: 113,
+      low: 104,
+      close: 106,
+    },
+    {
+      time: Date.UTC(2026, 0, 1, 5),
+      open: 106,
+      high: 109,
+      low: 98,
+      close: 100,
+    },
+    { time: Date.UTC(2026, 0, 1, 6), open: 100, high: 102, low: 90, close: 92 },
+    { time: Date.UTC(2026, 0, 1, 7), open: 92, high: 98, low: 88, close: 94 },
+    { time: Date.UTC(2026, 0, 1, 8), open: 94, high: 97, low: 90, close: 96 },
+  ];
+
+  const blocks = detectOrderBlocks(candles);
+  assert.deepEqual(
+    blocks.map(({ direction, zoneLow, zoneHigh }) => ({
+      direction,
+      zoneLow,
+      zoneHigh,
+    })),
+    [{ direction: "BULLISH", zoneLow: 96, zoneHigh: 110 }],
   );
 });
