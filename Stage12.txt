@@ -1,0 +1,58 @@
+STAGE 12: BACKTESTING ENGINE
+
+OBJECTIVE
+
+Create the chronological backtesting engine.
+
+ARCHITECTURE
+
+Separate:
+
+1. Market data.
+2. Strategy analysis.
+3. Trade simulation.
+4. Statistics.
+
+BACKTEST RULES
+
+Process candles chronologically.
+
+At candle N, the engine may only know information available by candle N.
+
+No lookahead bias.
+
+No future swing confirmation leaking backward.
+
+No future liquidity information.
+
+No future Order Block information.
+
+No future FVG information.
+
+Implement:
+
+- entry
+- stop loss
+- take profit
+- exit
+- trade lifecycle
+- chronological processing
+
+Handle same-candle SL/TP ambiguity explicitly.
+
+If both SL and TP are touched within one candle and intrabar order cannot be known, do not silently assume the favorable result.
+
+Create deterministic fixtures.
+
+Test:
+
+- winning trade
+- losing trade
+- no trade
+- multiple trades
+- same-candle SL/TP
+- end-of-data open position
+
+Update documentation.
+
+Do not proceed to Stage 13.

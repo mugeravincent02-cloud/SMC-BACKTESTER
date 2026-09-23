@@ -1,0 +1,48 @@
+STAGE 16: BACKTEST FRONTEND
+
+OBJECTIVE
+
+Build the frontend interface for running and reviewing backtests.
+
+Create controls for:
+
+- symbol
+- timeframe
+- historical range
+- starting balance
+- risk percentage
+- strategy configuration
+
+Display:
+
+- trade count
+- win rate
+- total R
+- net P/L
+- profit factor
+- max drawdown
+- average win
+- average loss
+- trade list
+- entry
+- exit
+- SL
+- TP
+- result
+
+Connect to the real backend API.
+
+Do not use fake hard-coded backtest results.
+
+Handle:
+
+- loading
+- errors
+- empty results
+- invalid inputs
+
+Test mobile at 375px.
+
+Test accessibility.
+
+Do not proceed to Stage 17.

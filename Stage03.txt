@@ -1,0 +1,54 @@
+STAGE 03: MARKET STRUCTURE ENGINE
+
+OBJECTIVE
+
+Build a deterministic and testable market-structure layer.
+
+AUDIT AND IMPLEMENT
+
+1. SwingDetector
+
+2. StructureDetector
+
+3. BOSDetector
+
+4. CHOCHDetector
+
+RULES
+
+Swings must be deterministic.
+
+Structure classification must be based only on available historical candles.
+
+BOS must not use future candles.
+
+CHoCH must not be treated as identical to BOS.
+
+Do not invent additional structure rules.
+
+TEST CASES
+
+Create deterministic candle fixtures for:
+
+1. Bullish structure.
+2. Bearish structure.
+3. Structure reversal.
+4. Clear BOS.
+5. Clear bearish BOS.
+6. Clear CHoCH.
+7. Insufficient candles.
+8. Empty candles.
+9. Equal/ambiguous structures.
+
+Verify indexes and candle references.
+
+Verify chronological ordering.
+
+UPDATE
+
+docs/strategy.md
+docs/Architecture.md
+docs/Roadmap.md
+docs/Agile.md
+
+Do not proceed to Stage 04.

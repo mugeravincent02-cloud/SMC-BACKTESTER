@@ -1,0 +1,43 @@
+STAGE 09: HTF / LTF ANALYSIS
+
+OBJECTIVE
+
+Connect higher-timeframe context with lower-timeframe confirmation.
+
+HTF PROVIDES
+
+- trend
+- major structure
+- liquidity
+- POIs
+
+LTF PROVIDES
+
+- reaction
+- BOS
+- CHoCH
+- entry confirmation
+
+IMPLEMENT
+
+1. Configurable HTF.
+2. Configurable LTF.
+3. HTF structure analysis.
+4. HTF POI detection.
+5. LTF reaction.
+6. LTF BOS/CHoCH confirmation.
+7. Time alignment.
+
+IMPORTANT
+
+Do not mix candles from different timeframes incorrectly.
+
+Do not use future HTF information.
+
+Do not allow an LTF candle to confirm something before the HTF information existed.
+
+Test chronological alignment carefully.
+
+Update docs.
+
+Do not proceed to Stage 10.

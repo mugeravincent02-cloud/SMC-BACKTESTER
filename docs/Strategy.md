@@ -10,6 +10,15 @@
 - CHoCH is a close through the protected opposing swing: the latest `HL` in bullish structure or latest `LH` in bearish structure. It is emitted separately from BOS.
 - Detectors process only candles and swings available at each event index and return events in chronological order.
 
+## Stage 04 liquidity core contract
+
+- Equal highs and equal lows are detected using a configurable numeric tolerance. The tolerance is read from the shared SMC config and never mutated in-place.
+- Swing liquidity retains the confirmed swing records and exposes their prices as `swingLiquidity.highs` and `swingLiquidity.lows`.
+- Previous-day liquidity uses the previous completed UTC/local calendar day from the configured timezone, with no lookahead into the current or future candle set.
+- Previous-week liquidity uses the previous completed week in the configured timezone, again without lookahead.
+- Session liquidity uses explicit session boundaries such as `timezone`, `sessionStart`, and `sessionEnd`, and tracks the running high/low inside that session.
+- All liquidity detectors operate on historical candles only and are deterministic for a fixed candle series.
+
 ## Current implementation status
 
 Completed:
@@ -20,6 +29,7 @@ Completed:
 - Close-based BOS detection
 - Protected-swing CHoCH detection
 - Equal-level liquidity detection
+- Stage 04 liquidity core: equal levels, swing liquidity, previous day/week levels, and session levels
 
 Planned in later approved stages:
 

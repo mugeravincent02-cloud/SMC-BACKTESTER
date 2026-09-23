@@ -1,0 +1,52 @@
+STAGE 18: STANDARD EVENT MODEL
+
+ONLY IMPLEMENT THIS STAGE AFTER THE ENGINE HAS BEEN AUDITED AND APPROVED.
+
+OBJECTIVE
+
+Create a consistent internal event representation.
+
+Potential event types:
+
+SWING
+BOS
+CHOCH
+LIQUIDITY_LEVEL
+LIQUIDITY_SWEEP
+ORDER_BLOCK
+FVG
+POI
+ENTRY
+EXIT
+BREAKEVEN
+TRADE_RESULT
+
+Each event should have a consistent structure.
+
+Conceptually:
+
+{
+  type,
+  direction,
+  index,
+  time,
+  price,
+  zone,
+  metadata
+}
+
+IMPORTANT
+
+Do not break the existing API unnecessarily.
+
+Use adapters where needed.
+
+Preserve backward compatibility where practical.
+
+Do not force unrelated components into one abstraction.
+
+Add tests for every event type.
+
+Update Architecture documentation.
+
+Do not proceed to Stage 19.

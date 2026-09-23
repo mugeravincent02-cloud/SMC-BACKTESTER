@@ -1,0 +1,52 @@
+STAGE 10: ENTRY VALIDATION
+
+OBJECTIVE
+
+Create one clear layer responsible for determining whether the complete strategy conditions are satisfied.
+
+Create an EntryValidator.
+
+Possible output:
+
+BUY
+SELL
+NONE
+
+Every result must explain WHY.
+
+BUY validation should consider the documented combination of:
+
+- relevant liquidity
+- bearish liquidity sweep
+- bullish POI/OB
+- HTF context
+- LTF confirmation
+- required inducement if applicable
+- other explicitly documented conditions
+
+SELL validation is the inverse.
+
+IMPORTANT
+
+Do not invent missing conditions.
+
+Do not use future information.
+
+Do not allow one isolated indicator to create a trade.
+
+Return structured reasons and references.
+
+Example concept:
+
+{
+  direction: "BUY",
+  valid: true,
+  reasons: [...],
+  references: [...]
+}
+
+Add deterministic tests.
+
+Update docs.
+
+Wait for approval.

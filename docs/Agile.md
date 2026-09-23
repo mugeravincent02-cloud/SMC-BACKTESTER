@@ -1,6 +1,6 @@
 # All sprint history lies within here.
 
-> Current checkpoint (2026-09-19): Stage 03 market-structure work is implemented and verified locally. Earlier sprint/stage notes are historical records.
+> Current checkpoint (2026-09-23): Stage 04 liquidity-core work is implemented and verified locally. Stage 05 liquidity-sweep detection is now active. Earlier sprint/stage notes are historical records.
 
 Project Workflow
 
@@ -83,15 +83,15 @@ Completed
 
 **Work completed:** Inspected root/server/client packages, application source, imports/exports, test coverage and project documentation. Started Express and Vite on isolated local ports. Verified the root endpoint, the exact requested BTCUSDT/1h/100 candle endpoint, the default SMC endpoint, every returned candle, and the present SMC records. Checked frontend HTML/module serving and its real API proxy. Re-ran existing automated tests, frontend lint/build and an additional backend/shared/test lint scan.
 
-| Check | Result |
-| --- | --- |
-| `GET /` | 200 JSON: `status: "Server running"`. |
-| `GET /api/candles?symbol=BTCUSDT&interval=1h&limit=100` | 200; 100 ordered numeric OHLCV candles and valid response metadata. |
-| `GET /api/smc/swings` | 200; swings, structure, BOS, CHoCH, equal-level liquidity and 100 previous-day rows validated against current response fields. |
-| Regression tests | 22 backend and four frontend checks pass. |
-| Frontend lint/build | Pass; no frontend lint warnings. |
-| Additional backend lint | 18 empty-file warnings for planned placeholder modules; no reported undefined-variable errors. |
-| Browser interaction/visual testing | Not verified: connected-app inventory contains no browser. |
+| Check                                                   | Result                                                                                                                         |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `GET /`                                                 | 200 JSON: `status: "Server running"`.                                                                                          |
+| `GET /api/candles?symbol=BTCUSDT&interval=1h&limit=100` | 200; 100 ordered numeric OHLCV candles and valid response metadata.                                                            |
+| `GET /api/smc/swings`                                   | 200; swings, structure, BOS, CHoCH, equal-level liquidity and 100 previous-day rows validated against current response fields. |
+| Regression tests                                        | 22 backend and four frontend checks pass.                                                                                      |
+| Frontend lint/build                                     | Pass; no frontend lint warnings.                                                                                               |
+| Additional backend lint                                 | 18 empty-file warnings for planned placeholder modules; no reported undefined-variable errors.                                 |
+| Browser interaction/visual testing                      | Not verified: connected-app inventory contains no browser.                                                                     |
 
 **Current usable scope:** Binance crypto candle loading; data normalization/validation; React controls, chart/table/statistics implementation; initial SMC algorithms and queryable analysis API. The standard event model remains postponed.
 
@@ -124,3 +124,21 @@ Completed
 **Verification:** `node --test tests/strategy/*.test.js` passes 10 of 10 tests. After a clean root `npm ci`, the full suite passes 46 of 46 tests.
 
 **Out of scope:** Stage 04 and later strategy modules, open-candle policy, and backtesting behavior.
+
+## Stage 04 — Liquidity core, 2026-09-23
+
+**Goal:** Make liquidity detection reliable and calendar-aware without lookahead.
+
+**Completed:** Added configurable equal high/low detection, swing liquidity output, previous-day and previous-week liquidity aggregation, and explicit session liquidity calculations with timezone/session configuration.
+
+**Verification:** `node --test tests/strategy/detectors.test.js` passes 11 of 11 tests.
+
+**Out of scope:** Stage 05 sweep detection, OB/FVG and future backtesting logic.
+
+## Stage 05 — Liquidity sweep detection, 2026-09-23
+
+**Goal:** Detect when price takes liquidity and rejects or reclaims a relevant level.
+
+**Completed:** SSL/BSL awareness, sweep candle metadata, relevant price, direction, reclaim/confirmation checks, and false/failed sweep cases were added and locally verified without future-candle access. Stage 06 work remains out of scope.
+
+**Verification:** `node --test tests/strategy/detectors.test.js` passes 13 of 13 tests.

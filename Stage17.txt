@@ -1,0 +1,55 @@
+STAGE 17: FULL SMC ENGINE AUDIT
+
+OBJECTIVE
+
+Audit the entire SMC engine before introducing the standard event model.
+
+Audit:
+
+- Swing detection
+- Structure
+- BOS
+- CHoCH
+- Liquidity
+- Liquidity sweeps
+- Order Blocks
+- FVG
+- POI
+- HTF/LTF
+- Entry validation
+- Backtesting
+- Risk
+- Statistics
+
+FOCUS
+
+1. Correctness.
+2. Determinism.
+3. Lookahead bias.
+4. Time alignment.
+5. Index references.
+6. Duplicate events.
+7. Missing events.
+8. Edge cases.
+9. Performance.
+10. Test coverage.
+
+Create:
+
+docs/StrategyEngineAudit.md
+
+For every subsystem document:
+
+- what it does
+- input
+- output
+- known assumptions
+- known limitations
+- test coverage
+- potential issues
+
+Fix critical issues before continuing.
+
+Do not introduce the standard event model yet.
+
+Wait for approval.

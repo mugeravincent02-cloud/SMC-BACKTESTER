@@ -1,0 +1,47 @@
+STAGE 05: LIQUIDITY SWEEP DETECTION
+
+OBJECTIVE
+
+Detect when price takes liquidity and rejects/reclaims the level.
+
+BUY-SIDE LOGIC
+
+Potential bullish sweep:
+
+1. A known SSL exists.
+2. Price trades below the SSL.
+3. Price subsequently reclaims/closes back above the relevant level according to the documented strategy.
+
+SELL-SIDE LOGIC
+
+Potential bearish sweep:
+
+1. A known BSL exists.
+2. Price trades above the BSL.
+3. Price subsequently closes/reclaims below the relevant level according to the documented strategy.
+
+IMPORTANT
+
+A liquidity sweep is NOT automatically an entry.
+
+The detector should report the event and supporting data.
+
+Include:
+
+- liquidity type
+- level
+- sweep candle index
+- sweep candle time
+- relevant price
+- direction
+- confirmation/reclaim information
+
+Do not use future candles.
+
+Test bullish and bearish examples.
+
+Test false/failed sweeps.
+
+Update documentation.
+
+Do not proceed to Stage 06.

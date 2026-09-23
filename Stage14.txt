@@ -1,0 +1,47 @@
+STAGE 14: BACKTEST STATISTICS
+
+OBJECTIVE
+
+Create a reliable statistics layer.
+
+Calculate:
+
+- total trades
+- winning trades
+- losing trades
+- win rate
+- total R
+- average R
+- average win
+- average loss
+- profit factor
+- net P/L
+- starting balance
+- ending balance
+- maximum drawdown
+- largest win
+- largest loss
+- consecutive wins
+- consecutive losses
+
+Statistics must be calculated from completed trades.
+
+Do not mix analytical events with trade results.
+
+Create deterministic tests.
+
+Test zero trades.
+
+Test one trade.
+
+Test all wins.
+
+Test all losses.
+
+Test mixed results.
+
+Test drawdown.
+
+Update docs.
+
+Do not proceed to Stage 15.
