@@ -1,0 +1,19 @@
+STAGE 10: ENTRY VALIDATION
+
+OBJECTIVE
+
+Validate whether a trade idea is usable based on direction, risk, POI and confluence.
+
+RULES
+
+- A valid bullish entry must have bullish direction, a bullish POI, and a valid risk structure.
+- A valid bearish entry must have bearish direction, a bearish POI, and a valid risk structure.
+- Stop-loss and take-profit checks must be consistent with the order of price action.
+- No future data or lookahead is allowed.
+
+IMPORTANT
+
+- The validator should report clear pass/fail checks.
+- Entry validation must remain a decision-support utility, not auto-execution logic.
+
+This stage completes the next phase of the historical-only engine.

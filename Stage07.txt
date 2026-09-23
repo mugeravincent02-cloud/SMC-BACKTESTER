@@ -1,0 +1,23 @@
+STAGE 07: FAIR VALUE GAP / IMBALANCE DETECTION
+
+OBJECTIVE
+
+Detect historical-only price gaps and imbalances that represent a fair value gap.
+
+BUY-SIDE LOGIC
+
+A bullish FVG exists when a candle breaks above the previous candle's high without a continuous fill between the two candles.
+
+SELL-SIDE LOGIC
+
+A bearish FVG exists when a candle breaks below the previous candle's low without a continuous fill between the two candles.
+
+IMPORTANT
+
+- Do not use future candles.
+- Keep the detector deterministic and historical-only.
+- Return the relevant gap boundaries and direction.
+- Test both bullish and bearish gaps.
+- Update the baseline and docs.
+
+Do not proceed to Stage 08 until the Stage 07 test contract passes.

@@ -1,0 +1,18 @@
+STAGE 09: HTF / LTF ANALYSIS
+
+OBJECTIVE
+
+Combine higher-timeframe context with lower-timeframe confirmation in a deterministic way.
+
+RULES
+
+- Compare directional agreement between HTF and LTF context.
+- Keep the result as a confluence check rather than a hard-coded prediction engine.
+- Do not create lookahead or future-aware logic.
+
+IMPORTANT
+
+- The outcome should report whether the HTF and LTF context align.
+- The detector should not silently invent unsupported signals.
+
+Do not proceed to Stage 10 until the Stage 09 test contract passes.
