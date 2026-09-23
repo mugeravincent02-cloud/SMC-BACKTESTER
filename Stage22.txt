@@ -1,0 +1,40 @@
+STAGE 22: DEPLOYMENT PREPARATION
+
+OBJECTIVE
+
+Prepare the application for deployment.
+
+DOCUMENT:
+
+- production environment variables
+- frontend build
+- backend start command
+- API URL
+- CORS configuration
+- database configuration if applicable
+- health check
+- logging
+- error handling
+- deployment procedure
+- rollback procedure
+
+Verify:
+
+1. Production build succeeds.
+2. Server starts correctly.
+3. Frontend connects to production API.
+4. CORS works.
+5. Environment variables work.
+6. Secrets are not committed.
+7. Health endpoint works.
+8. Main market API works.
+9. SMC API works.
+10. Backtest API works.
+
+Create:
+
+docs/Deployment.md
+
+Do not perform final release yet.
+
+Wait for approval.

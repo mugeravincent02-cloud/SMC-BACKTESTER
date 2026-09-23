@@ -1,0 +1,243 @@
+STAGE 02: MARKET DATA FOUNDATION
+
+Stage 01 baseline audit is complete.
+
+The Stage 01 report identified several unresolved issues. Do not attempt to solve all of them during this stage.
+
+This stage is ONLY about stabilizing and auditing the market-data layer.
+
+OBJECTIVE
+
+Make the market-data pipeline reliable, predictable, validated, and testable without changing the SMC strategy logic.
+
+FIRST
+
+Read the current:
+
+docs/Baseline.md
+docs/API.md
+docs/Development.md
+docs/Architecture.md
+docs/Agile.md
+docs/Roadmap.md
+docs/strategy.md
+
+Also inspect the current implementation before making changes.
+
+AUDIT THESE FILES
+
+- BinanceService
+- DataCleaner
+- MarketController
+- MarketRoutes
+- ValidateMarketRequest
+- related market-data tests
+- related configuration
+
+VERIFY THE COMPLETE DATA FLOW
+
+Provider
+→ BinanceService
+→ DataCleaner
+→ MarketController
+→ API response
+
+REQUIREMENTS
+
+1. BinanceService
+
+Verify:
+
+- provider URL
+- request parameters
+- symbol handling
+- interval handling
+- limit handling
+- timeout
+- provider error handling
+- empty response handling
+
+Do not introduce provider-specific assumptions that are not already required.
+
+2. DataCleaner
+
+Verify that valid Binance candle data becomes:
+
+{
+  time,
+  open,
+  high,
+  low,
+  close,
+  volume
+}
+
+Verify numeric conversion.
+
+Verify handling of:
+
+- malformed candle
+- missing fields
+- non-numeric values
+- negative/invalid price values where the existing implementation requires rejection
+- invalid volume
+- empty input
+- unordered candles
+
+IMPORTANT
+
+The Stage 01 audit states that malformed or unordered candles were rejected rather than sorted, dropped, or synthesized.
+
+Do not change that behavior without a clear reason and tests.
+
+3. MarketController
+
+Verify:
+
+- request parameters are validated
+- limit is parsed correctly
+- invalid values cannot reach Binance
+- errors are handled consistently
+- cleaned candle data is returned
+- provider errors do not expose internal details
+
+4. MarketRoutes
+
+Verify:
+
+GET /api/candles
+
+is correctly connected to validation and controller logic.
+
+5. Validation
+
+Verify allowed:
+
+- symbols
+- intervals
+- limits
+
+Do not unnecessarily restrict the application to BTCUSDT if the architecture already supports configurable symbols.
+
+6. API CONTRACT
+
+Document the actual response shape.
+
+Document expected error responses.
+
+Do not invent a new response schema unless necessary.
+
+7. TESTS
+
+Run the existing complete test suite.
+
+Add focused tests where coverage is missing.
+
+At minimum test:
+
+- valid BTCUSDT request
+- valid interval
+- valid limit
+- invalid symbol
+- invalid interval
+- invalid limit
+- empty provider response
+- malformed provider response
+- provider error
+- malformed candle
+- unordered candles
+- numeric conversion
+- controller error handling
+
+8. TIMEOUT
+
+The Stage 01 audit recorded an eight-second provider timeout as the current implementation default.
+
+Keep it unless there is a demonstrated reason to change it.
+
+If you change it, explain why and update documentation.
+
+9. DO NOT TOUCH
+
+Do not implement:
+
+- CHoCH redesign
+- BOS redesign
+- Order Blocks
+- FVG
+- POI
+- liquidity sweeps
+- HTF/LTF
+- entry validation
+- backtesting
+- risk engine
+- statistics
+- TradingView integration
+- standard event model
+
+Those belong to later stages.
+
+10. SECURITY
+
+Do not perform the complete production security audit yet.
+
+However, do not introduce:
+
+- exposed secrets
+- hard-coded credentials
+- unsafe provider configuration
+- stack-trace leakage
+
+11. TEST COMMANDS
+
+Run the appropriate backend tests.
+
+Run:
+
+npm.cmd test
+
+and, if applicable:
+
+npm.cmd --prefix server test
+
+Remember that the Stage 01 report established that these currently run the same backend suite. Do not represent them as separate additional test counts.
+
+Also run the client tests/build if your changes affect the frontend.
+
+12. DOCUMENTATION
+
+Update only the documentation relevant to this stage.
+
+Update:
+
+docs/API.md
+docs/Architecture.md
+docs/Agile.md
+docs/Roadmap.md
+
+If Baseline.md needs a factual correction based on this stage, update it too.
+
+Do not rewrite unrelated documentation.
+
+FINAL REPORT
+
+When finished, STOP.
+
+Do not start Stage 03.
+
+Report:
+
+1. Files changed.
+2. Exact purpose of each change.
+3. Tests added.
+4. Tests run.
+5. Test results.
+6. API behavior verified.
+7. Any assumptions.
+8. Any unresolved market-data issues.
+9. Documentation updated.
+10. Whether the working tree is clean.
+
+DO NOT COMMIT OR PUSH YET.
+
+Wait for my audit and explicit approval.

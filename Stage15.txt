@@ -1,0 +1,45 @@
+STAGE 15: BACKTEST API
+
+OBJECTIVE
+
+Expose the backtesting engine through the backend API.
+
+Create a clean endpoint, preferably:
+
+POST /api/backtest
+
+Accept validated configuration such as:
+
+- symbol
+- timeframe
+- start/end or candle range
+- strategy configuration
+- risk configuration
+- initial balance
+
+Return:
+
+- backtest configuration
+- trades
+- statistics
+- summary
+
+IMPORTANT
+
+Validate all incoming data.
+
+Do not allow executable code through request payloads.
+
+Do not expose internal stack traces.
+
+Keep controller, service, strategy and simulation responsibilities separated.
+
+Add API tests.
+
+Update:
+
+docs/API.md
+docs/Architecture.md
+docs/Roadmap.md
+
+Do not proceed to Stage 16.

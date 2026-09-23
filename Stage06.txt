@@ -1,0 +1,50 @@
+STAGE 06: ORDER BLOCK ENGINE
+
+OBJECTIVE
+
+Implement Order Block detection based on the project's documented strategy.
+
+IMPORTANT
+
+Use the project's working definition.
+
+Do not silently replace it with a generic definition from the internet.
+
+Current working concept:
+
+An Order Block represents the area used for buy/sell entries after a directional shift where price creates an imbalance and takes out the previous candle high/low according to direction.
+
+Before implementing ambiguous details:
+
+1. Identify what is explicitly defined.
+2. Identify what is not defined.
+3. Do not invent permanent rules.
+
+ORDER BLOCK OUTPUT SHOULD INCLUDE
+
+- direction
+- candle/index reference
+- zone high
+- zone low
+- creation time
+- structural context
+- associated impulse information
+- optional FVG relationship if already available
+
+IMPORTANT
+
+No lookahead.
+
+An Order Block must only become known after the information required to identify it has occurred.
+
+Test:
+
+- bullish OB
+- bearish OB
+- invalid pattern
+- insufficient candles
+- overlapping zones
+
+Update docs.
+
+Wait for approval.

@@ -1,0 +1,47 @@
+STAGE 13: RISK AND TRADE MANAGEMENT
+
+OBJECTIVE
+
+Add configurable risk management to the backtest.
+
+Support:
+
+- account balance
+- risk percentage
+- position size
+- stop loss
+- take profit
+- R multiple
+- fees
+- slippage
+- breakeven
+
+DOCUMENTED RISK RANGE
+
+Personal account:
+1% to 2%.
+
+Funded account:
+0.25% to 1%.
+
+Do not hard-code one value.
+
+Make risk configurable.
+
+Calculate:
+
+risk amount
+position size
+R result
+profit/loss
+new balance
+
+Support breakeven after documented favorable structural progress.
+
+Do not introduce undocumented trade-management rules.
+
+Test all calculations.
+
+Update docs.
+
+Wait for approval.

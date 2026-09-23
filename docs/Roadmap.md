@@ -1,6 +1,6 @@
 # 1. Project Vision
 
-> Current status (2026-09-19): Stage 03 market-structure implementation and verification are complete locally. Earlier sprint/phase and Stage 01/02 entries below are preserved history.
+> Current status (2026-09-23): Stage 04 liquidity-core implementation and verification are complete locally. Stage 05 liquidity sweep detection is also complete locally and verified. Earlier sprint/phase and Stage 01/02 entries below are preserved history.
 
     Current Sprint
 
@@ -185,19 +185,19 @@ Phase 4
 
 ## Current implementation matrix — Stage 01 audit, 2026-09-18
 
-| Area | Actual state | Remaining work |
-| --- | --- | --- |
-| Express and React/Vite foundation | Implemented; both processes start, frontend serves HTML/modules and proxy works. | Browser visual/interaction checks and deployment verification. |
-| Market data | Binance crypto candles load; exact BTCUSDT/1h/100 request passes. | FX/OANDA, historical pagination, gap/open-candle policy, retry/rate-limit behavior. |
-| Candle normalization | Numeric OHLCV, timestamp/order and row validation implemented and tested. | Confirm closed-candle availability rules and day/session coverage expectations. |
-| Chart/dashboard | v5 candlestick chart, selectors, table, statistics and inline retry path implemented; SSR/build checks pass. | Real-browser canvas, resize, retry and stale-request tests; SMC overlays are absent. |
-| Swings and structure | Three-candle swings and previous-same-type HH/HL/LH/LL classification implemented. | Confirmation timing, ties and relevant/protected structural swings need approved rules. |
-| BOS | Close-based breaks implemented; ordered results and reference compatibility tested. | Continuation versus reversal semantics and chronological availability validation. |
-| CHoCH | Adjacent-label transition heuristic implemented; event fields work. | Meaningful reversal detection is not strategy-validated; ordinary alternating labels can suppress transitions. |
-| Liquidity | Equal-high/low pairs and available-UTC-day extrema are wired into the API. | Full/partial-day policy, session/week levels, sweep detection and clustering rules. |
-| Strategy and backtesting | OB/FVG/POI, HTF/LTF entries, risk/trade management and performance simulation are not implemented. | Future approved stages only. |
-| Tests | 22 backend and four frontend checks pass; frontend lint/build pass. | Browser tests, chronological/repainting fixtures, time boundaries, actual timeout behavior and broader failure contracts. |
-| Repository/security | Real root ignore file exists; environment examples exist; current docs omit old credential values. | Stage 01 removes local server environment from the root index before commit; tracked vendor files, nested Git ownership, historical credential rotation and production controls remain. |
+| Area                              | Actual state                                                                                                 | Remaining work                                                                                                                                                                          |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Express and React/Vite foundation | Implemented; both processes start, frontend serves HTML/modules and proxy works.                             | Browser visual/interaction checks and deployment verification.                                                                                                                          |
+| Market data                       | Binance crypto candles load; exact BTCUSDT/1h/100 request passes.                                            | FX/OANDA, historical pagination, gap/open-candle policy, retry/rate-limit behavior.                                                                                                     |
+| Candle normalization              | Numeric OHLCV, timestamp/order and row validation implemented and tested.                                    | Confirm closed-candle availability rules and day/session coverage expectations.                                                                                                         |
+| Chart/dashboard                   | v5 candlestick chart, selectors, table, statistics and inline retry path implemented; SSR/build checks pass. | Real-browser canvas, resize, retry and stale-request tests; SMC overlays are absent.                                                                                                    |
+| Swings and structure              | Three-candle swings and previous-same-type HH/HL/LH/LL classification implemented.                           | Confirmation timing, ties and relevant/protected structural swings need approved rules.                                                                                                 |
+| BOS                               | Close-based breaks implemented; ordered results and reference compatibility tested.                          | Continuation versus reversal semantics and chronological availability validation.                                                                                                       |
+| CHoCH                             | Adjacent-label transition heuristic implemented; event fields work.                                          | Meaningful reversal detection is not strategy-validated; ordinary alternating labels can suppress transitions.                                                                          |
+| Liquidity                         | Equal-high/low pairs and available-UTC-day extrema are wired into the API.                                   | Full/partial-day policy, session/week levels, sweep detection and clustering rules.                                                                                                     |
+| Strategy and backtesting          | OB/FVG/POI, HTF/LTF entries, risk/trade management and performance simulation are not implemented.           | Future approved stages only.                                                                                                                                                            |
+| Tests                             | 22 backend and four frontend checks pass; frontend lint/build pass.                                          | Browser tests, chronological/repainting fixtures, time boundaries, actual timeout behavior and broader failure contracts.                                                               |
+| Repository/security               | Real root ignore file exists; environment examples exist; current docs omit old credential values.           | Stage 01 removes local server environment from the root index before commit; tracked vendor files, nested Git ownership, historical credential rotation and production controls remain. |
 
 **Corrections to earlier status claims:** SwingDetector does not use smcConfig; it still uses a fixed three-candle comparison. Equal-level output contains `{ first, second }` pairs, not an average liquidity price. Previous-day liquidity is already implemented and wired after pre-stage repairs, but its available-date behavior is not proof of complete trading-day data. Database/model files and backtesting files remain empty placeholders.
 
@@ -207,18 +207,26 @@ Stage 02 remains pending user approval. Full findings and the append-only change
 
 ## Stage 02 update — Market data foundation, 2026-09-18
 
-| Area | Current result |
-| --- | --- |
-| Provider contract | Fixed Binance Spot kline endpoint, existing configurable symbol/interval/limit and 8,000 ms timeout verified. Shared defaults used by service. Non-array bodies rejected; genuine [] retained. |
-| Cleaning | Numeric OHLCV and chronological validation retained. Missing/sparse rows now reject the dataset instead of producing null records. No sorting, dropping or synthetic candles. |
-| API contract | Existing metadata/shape and 200/400/500 categories preserved. All caught MarketController failures now return one sanitized public message. |
-| Route/validation | Existing middleware ordering, 15-interval allowlist, configurable uppercase alphanumeric symbols and numeric limits 1–1000 verified without changes. |
-| Tests | 42 backend tests pass, including 20 added market-data checks. Four existing frontend tests pass; lint/build pass. Root/server commands count the same backend tests. |
-| Market-data limitations | No open-candle exclusion, gap/day/session policy, pagination, retry/backoff or richer upstream error statuses. Numeric conversion still uses JavaScript Number. |
-| Other engine work | SMC logic, entry validation, OB/FVG/POI, backtesting, risk/statistics and the postponed event model remain outside this stage. |
+| Area                    | Current result                                                                                                                                                                                 |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Provider contract       | Fixed Binance Spot kline endpoint, existing configurable symbol/interval/limit and 8,000 ms timeout verified. Shared defaults used by service. Non-array bodies rejected; genuine [] retained. |
+| Cleaning                | Numeric OHLCV and chronological validation retained. Missing/sparse rows now reject the dataset instead of producing null records. No sorting, dropping or synthetic candles.                  |
+| API contract            | Existing metadata/shape and 200/400/500 categories preserved. All caught MarketController failures now return one sanitized public message.                                                    |
+| Route/validation        | Existing middleware ordering, 15-interval allowlist, configurable uppercase alphanumeric symbols and numeric limits 1–1000 verified without changes.                                           |
+| Tests                   | 42 backend tests pass, including 20 added market-data checks. Four existing frontend tests pass; lint/build pass. Root/server commands count the same backend tests.                           |
+| Market-data limitations | No open-candle exclusion, gap/day/session policy, pagination, retry/backoff or richer upstream error statuses. Numeric conversion still uses JavaScript Number.                                |
+| Other engine work       | SMC logic, entry validation, OB/FVG/POI, backtesting, risk/statistics and the postponed event model remain outside this stage.                                                                 |
 
 The actual request/error contract is documented in API.md, and the data flow in Architecture.md. Baseline.md preserves the findings and repair evidence. Stage 02 is awaiting audit and explicit commit/push approval. Stage 03 must not begin automatically.
 
 ## Stage 03 update — Market structure engine, 2026-09-19
 
 Stage 03 implements deterministic three-candle swings with an explicit confirmation index, same-type HH/LH/HL/LL classification, close-based BOS in an established trend, and protected-swing CHoCH. The strategy tests cover bullish and bearish structures, reversal/CHoCH, bullish and bearish BOS, empty/insufficient input, equal/ambiguous candles, indexes, source-candle references, confirmation availability, and chronological ordering. No Stage 04 work is included.
+
+## Stage 04 update — Liquidity core, 2026-09-23
+
+Stage 04 adds the liquidity-core layer: configurable equal highs/lows with numeric tolerance, swing liquidity values, previous-day and previous-week aggregation, and explicit session liquidity boundaries with timezone/session configuration. The detector suite verifies equal-level tolerance boundaries, non-equal comparisons, swing price outputs, previous-day/week windows and session levels without lookahead. The implementation remains historical-only and deterministic for a fixed candle series.
+
+## Stage 05 activation — Liquidity sweep detection, 2026-09-23
+
+Stage 05 is complete and locally verified. The project now includes sweep-and-reclaim detection with SSL/BSL context, sweep candle metadata, relevant price, direction, and confirmation/reclaim checks without using future candles. False or failed sweeps are covered, and Stage 06 must remain out of scope until a new stage is explicitly opened.

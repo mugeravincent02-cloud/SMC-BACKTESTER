@@ -1,0 +1,40 @@
+STAGE 19: TRADINGVIEW INTEGRATION RESEARCH
+
+OBJECTIVE
+
+Research legitimate ways to integrate TradingView-related functionality.
+
+Research:
+
+- official chart embedding
+- APIs
+- webhooks
+- broker integrations
+- data feeds
+- authentication
+- alerts
+- supported integrations
+- licensing restrictions
+
+IMPORTANT
+
+Do not scrape private TradingView pages.
+
+Do not bypass authentication.
+
+Do not attempt to automate private UI functionality without official support.
+
+Separate:
+
+1. What TradingView officially supports.
+2. What requires third-party services.
+3. What is technically possible but restricted.
+4. What is appropriate for this project.
+
+Create:
+
+docs/TradingViewResearch.md
+
+Do not implement integration based on assumptions.
+
+Wait for approval.
