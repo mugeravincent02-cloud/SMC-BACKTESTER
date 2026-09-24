@@ -2,13 +2,13 @@ Smart Money Backtester
 An application for analysing, backtesting and visualizing Smart Money Concept Strategy
 
 Current Milestone:
-✅Project Setup
+✅Project Finalization
 
 # Smart Money Concept (SMC) Backtesting Platform
 
 Version: 0.1.0
 
-Project Status: Planning
+Project Status: Finishing 
 
 Author: Mugera Vincent
 
