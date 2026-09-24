@@ -1,0 +1,81 @@
+STAGE 21: FULL APPLICATION AUDIT
+
+Run the complete application audit.
+
+BACKEND
+
+Test:
+
+- market API
+- SMC API
+- backtest API
+- validation
+- errors
+- edge cases
+
+ENGINE
+
+Test:
+
+- swings
+- structure
+- BOS
+- CHoCH
+- liquidity
+- sweeps
+- OB
+- FVG
+- POI
+- HTF/LTF
+- entries
+- backtesting
+- risk
+- statistics
+
+FRONTEND
+
+Test:
+
+- all pages
+- all buttons
+- forms
+- API integration
+- loading
+- error states
+- empty states
+- chart
+- responsiveness
+
+MOBILE
+
+Explicitly test:
+
+375px width
+
+ACCESSIBILITY
+
+Check:
+
+- semantic HTML
+- labels
+- keyboard navigation
+- focus
+- contrast
+- meaningful buttons
+- screen-reader-friendly controls
+
+ALSO RUN
+
+- tests
+- lint
+- build
+- dependency audit
+- API tests
+
+Create:
+
+docs/ReleaseAudit.md
+
+Do not proceed to deployment until critical issues are resolved.
+
+Wait for approval.

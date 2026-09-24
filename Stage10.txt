@@ -2,18 +2,51 @@ STAGE 10: ENTRY VALIDATION
 
 OBJECTIVE
 
-Validate whether a trade idea is usable based on direction, risk, POI and confluence.
+Create one clear layer responsible for determining whether the complete strategy conditions are satisfied.
 
-RULES
+Create an EntryValidator.
 
-- A valid bullish entry must have bullish direction, a bullish POI, and a valid risk structure.
-- A valid bearish entry must have bearish direction, a bearish POI, and a valid risk structure.
-- Stop-loss and take-profit checks must be consistent with the order of price action.
-- No future data or lookahead is allowed.
+Possible output:
+
+BUY
+SELL
+NONE
+
+Every result must explain WHY.
+
+BUY validation should consider the documented combination of:
+
+- relevant liquidity
+- bearish liquidity sweep
+- bullish POI/OB
+- HTF context
+- LTF confirmation
+- required inducement if applicable
+- other explicitly documented conditions
+
+SELL validation is the inverse.
 
 IMPORTANT
 
-- The validator should report clear pass/fail checks.
-- Entry validation must remain a decision-support utility, not auto-execution logic.
+Do not invent missing conditions.
 
-This stage completes the next phase of the historical-only engine.
+Do not use future information.
+
+Do not allow one isolated indicator to create a trade.
+
+Return structured reasons and references.
+
+Example concept:
+
+{
+  direction: "BUY",
+  valid: true,
+  reasons: [...],
+  references: [...]
+}
+
+Add deterministic tests.
+
+Update docs.
+
+Wait for approval.

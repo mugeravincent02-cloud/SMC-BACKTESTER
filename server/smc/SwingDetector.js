@@ -1,4 +1,8 @@
 function detectSwings(candles) {
+  if (!Array.isArray(candles) || candles.length < 3) {
+    return [];
+  }
+
   const swings = [];
 
   for (let i = 1; i < candles.length - 1; i++) {
@@ -13,6 +17,7 @@ function detectSwings(candles) {
       swings.push({
         type: "HIGH",
         index: i,
+        confirmationIndex: i + 1,
         candle: current,
       });
     }
@@ -21,6 +26,7 @@ function detectSwings(candles) {
       swings.push({
         type: "LOW",
         index: i,
+        confirmationIndex: i + 1,
         candle: current,
       });
     }

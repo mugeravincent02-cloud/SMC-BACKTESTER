@@ -1,0 +1,50 @@
+STAGE 04: LIQUIDITY CORE
+
+OBJECTIVE
+
+Build reliable liquidity detection.
+
+IMPLEMENT/AUDIT
+
+1. Equal Highs.
+2. Equal Lows.
+3. Swing liquidity.
+4. Previous Day High.
+5. Previous Day Low.
+6. Previous Week High.
+7. Previous Week Low.
+8. Session High.
+9. Session Low.
+
+IMPORTANT
+
+Equal-level tolerance must be configurable.
+
+Use numeric tolerance correctly.
+
+Do not mutate configuration values.
+
+Do not use future candles.
+
+Do not introduce lookahead bias.
+
+Session calculations must have explicit timezone/session configuration.
+
+TEST
+
+Use deterministic candle fixtures.
+
+Test:
+
+- obvious equal highs
+- obvious equal lows
+- non-equal highs
+- non-equal lows
+- tolerance boundary
+- previous day levels
+- previous week levels
+- session levels
+
+UPDATE DOCUMENTATION.
+
+Do not proceed to Stage 05.

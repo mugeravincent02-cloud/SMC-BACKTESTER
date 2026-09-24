@@ -18,3 +18,44 @@ IMPORTANT
 - Stage 08 depends on the Stage 07 FVG contract.
 
 Do not proceed to Stage 09 until the Stage 08 test contract passes.
+STAGE 08: POINT OF INTEREST ENGINE
+
+OBJECTIVE
+
+Combine SMC components into meaningful Points of Interest.
+
+Potential components:
+
+- Order Block
+- FVG
+- Liquidity
+- Liquidity sweep
+- Market structure
+- Previous day liquidity
+- Previous week liquidity
+- Session liquidity
+
+IMPORTANT
+
+Do not create an arbitrary numerical score unless the strategy explicitly defines one.
+
+Instead, expose the actual reasons a POI exists.
+
+A POI should contain:
+
+- direction
+- zone
+- supporting components
+- liquidity relationship
+- structure relationship
+- timestamp/index references
+- validity state
+- reasons
+
+Do not turn every detected SMC element into a trade.
+
+Test confluence and non-confluence cases.
+
+Update documentation.
+
+Wait for approval.

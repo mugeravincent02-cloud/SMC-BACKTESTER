@@ -1,0 +1,103 @@
+STAGE 23: FINAL SHIP AUDIT
+
+This is the final stage.
+
+Do not make assumptions.
+
+Audit the entire project as if it is about to be released.
+
+CHECK:
+
+FUNCTIONALITY
+
+- market data
+- SMC analysis
+- liquidity
+- sweeps
+- Order Blocks
+- FVG
+- POI
+- HTF/LTF
+- entries
+- chart
+- backtesting
+- risk
+- statistics
+- frontend
+
+CORRECTNESS
+
+- deterministic calculations
+- chronological processing
+- no lookahead bias
+- correct timestamps
+- correct indexes
+- correct trade results
+- correct statistics
+
+SECURITY
+
+- secrets
+- CORS
+- validation
+- error leakage
+- dependencies
+- production configuration
+
+FRONTEND
+
+- desktop
+- tablet
+- 375px mobile
+- accessibility
+- loading
+- error states
+- empty states
+
+DOCUMENTATION
+
+Verify:
+
+docs/Agile.md
+docs/API.md
+docs/Architecture.md
+docs/Roadmap.md
+docs/strategy.md
+docs/StrategyEngineAudit.md
+docs/ReleaseAudit.md
+docs/Deployment.md
+docs/TradingViewResearch.md
+
+GIT
+
+Verify:
+
+- clean working tree
+- correct branch
+- all important changes committed
+- no secrets
+- no generated junk
+- no unnecessary files
+
+FINAL OUTPUT
+
+Create:
+
+docs/FinalShipAudit.md
+
+The document must contain:
+
+- tested functionality
+- test results
+- known limitations
+- unresolved issues
+- deployment status
+- documentation status
+- security status
+- final release readiness information
+
+Do NOT create a release tag automatically.
+
+Show me the final audit.
+
+Wait for my explicit approval before tagging/releasing.

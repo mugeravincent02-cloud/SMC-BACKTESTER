@@ -216,3 +216,16 @@ Responsibilities remain separated:
 Tests now include the real route, middleware, controller, service and cleaner with only Axios replaced at the provider boundary. A separate stalled loopback server verifies the real Axios eight-second timeout; it is a test-only destination and does not change production configuration. Existing detector and frontend suites remain regression checks.
 
 Still outside this stage: historical pagination, open-candle exclusion, gap/day/session policies, decimal-arithmetic changes, retries/backoff, rate-limit coordination, full production security, and the trading/backtesting engines. See API.md for the actual market-data contract and Baseline.md for the append-only audit.
+
+## Stage 03 — Market-structure engine, 2026-09-19
+
+```text
+clean historical candles
+  -> SwingDetector (strict three-candle swings, confirmation index)
+  -> StructureDetector (HH/LH/HL/LL and established trend state)
+  -> BOSDetector (latest confirmed continuation level)
+  -> CHOCHDetector (protected opposing-swing break)
+  -> SMCController response
+```
+
+The detectors retain candle references and only use swings at or before their confirmation index. BOS and CHoCH are separate event types; both use candle closes and are emitted in chronological order.

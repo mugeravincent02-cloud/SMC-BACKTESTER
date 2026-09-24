@@ -1,0 +1,44 @@
+STAGE 11: SMC CHART VISUALIZATION
+
+OBJECTIVE
+
+Display detected SMC information clearly on the existing chart.
+
+Preserve the existing lightweight-charts implementation.
+
+Do not replace the chart library.
+
+Add visualization incrementally.
+
+Display:
+
+1. Candles.
+2. Swing highs/lows.
+3. BOS.
+4. CHoCH.
+5. Liquidity levels.
+6. Liquidity sweeps.
+7. Order Blocks.
+8. FVGs.
+9. POIs.
+10. Entry markers.
+
+IMPORTANT
+
+Do not make the chart visually overloaded.
+
+Allow layers to be enabled/disabled where practical.
+
+Preserve responsive resizing.
+
+Test at:
+
+- desktop
+- tablet
+- 375px mobile width
+
+Do not modify unrelated frontend components.
+
+Update docs.
+
+Do not proceed to Stage 12.

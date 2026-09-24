@@ -1,0 +1,39 @@
+STAGE 20: SECURITY HARDENING
+
+OBJECTIVE
+
+Prepare the application for production.
+
+AUDIT:
+
+- environment variables
+- secrets
+- .env
+- .gitignore
+- CORS
+- request validation
+- rate limiting
+- secure headers
+- error responses
+- dependency vulnerabilities
+- logging
+- authentication boundaries
+- API abuse
+- sensitive information leakage
+
+IMPORTANT
+
+Never expose:
+
+- API secrets
+- private credentials
+- internal stack traces
+- unnecessary environment information
+
+Verify production environment configuration.
+
+Do not break local development.
+
+Update documentation.
+
+Do not proceed to Stage 21.

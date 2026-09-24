@@ -21,3 +21,43 @@ IMPORTANT
 - Update the baseline and docs.
 
 Do not proceed to Stage 08 until the Stage 07 test contract passes.
+STAGE 07: FVG / IMBALANCE ENGINE
+
+OBJECTIVE
+
+Detect Fair Value Gaps / Imbalances using explicit candle relationships.
+
+Implement separately:
+
+1. Bullish FVG.
+2. Bearish FVG.
+
+Each detected FVG should include:
+
+- direction
+- start index
+- end index
+- upper boundary
+- lower boundary
+- creation time
+- candles involved
+
+IMPORTANT
+
+Do not automatically create a trade from an FVG.
+
+FVG detection is an analytical layer.
+
+Do not use future information.
+
+Test:
+
+- bullish FVG
+- bearish FVG
+- no FVG
+- overlapping FVG
+- incomplete candle sequences
+
+Update documentation.
+
+Do not proceed to Stage 08.

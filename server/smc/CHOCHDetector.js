@@ -1,26 +1,42 @@
-function detectCHOCH(structure) {
+const { getStructureState } = require("./StructureDetector");
+
+function detectCHOCH(candles, structure) {
+  if (!Array.isArray(candles) || !Array.isArray(structure)) {
+    return [];
+  }
+
   const chochEvents = [];
+  const brokenLevels = new Set();
 
-  for (let i = 1; i < structure.length; i++) {
-    const previous = structure[i - 1];
-    const current = structure[i];
+  for (let i = 0; i < candles.length; i++) {
+    const state = getStructureState(structure, i);
 
-    //Bullish trend becomes bearish
-    if (previous.structure === "HL" && current.structure === "LL") {
-      chochEvents.push({
-        direction: "BEARISH",
-        index: current.index,
-        candle: current.candle,
-      });
+    if (state.trend === "BULLISH" && state.protectedLow) {
+      const levelKey = `BEARISH:${state.protectedLow.index}`;
+      if (candles[i].close < state.protectedLow.candle.low && !brokenLevels.has(levelKey)) {
+        brokenLevels.add(levelKey);
+        chochEvents.push({
+          direction: "BEARISH",
+          brokenStructure: state.protectedLow.index,
+          breakIndex: i,
+          breakPrice: candles[i].close,
+          candle: candles[i],
+        });
+      }
     }
 
-    //Bearish trend becomes bullish
-    if (previous.structure === "LH" && current.structure === "HH") {
+    if (state.trend === "BEARISH" && state.protectedHigh) {
+      const levelKey = `BULLISH:${state.protectedHigh.index}`;
+      if (candles[i].close > state.protectedHigh.candle.high && !brokenLevels.has(levelKey)) {
+        brokenLevels.add(levelKey);
       chochEvents.push({
-        direction: "BULLISH",
-        index: current.index,
-        candle: current.candle,
+          direction: "BULLISH",
+          brokenStructure: state.protectedHigh.index,
+          breakIndex: i,
+          breakPrice: candles[i].close,
+          candle: candles[i],
       });
+      }
     }
   }
   return chochEvents;
