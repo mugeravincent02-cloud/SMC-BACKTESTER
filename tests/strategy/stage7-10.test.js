@@ -55,15 +55,23 @@ it("keeps only valid directional points of interest", () => {
 });
 
 it("aligns HTF and LTF context only when the directional bias agrees", () => {
-  const htfltf = combineHTFLTF(
+  const aligned = combineHTFLTF(
     [{ direction: "BULLISH", level: 100.5, index: 10 }],
     [{ direction: "BULLISH", level: 101.1, index: 2 }],
   );
 
-  assert.equal(htfltf.aligned, true);
-  assert.equal(htfltf.direction, "BULLISH");
-  assert.equal(htfltf.htf.direction, "BULLISH");
-  assert.equal(htfltf.ltf.direction, "BULLISH");
+  const conflicting = combineHTFLTF(
+    [{ direction: "BULLISH", level: 100.5, index: 10 }],
+    [{ direction: "BEARISH", level: 99.2, index: 2 }],
+  );
+
+  assert.equal(aligned.aligned, true);
+  assert.equal(aligned.direction, "BULLISH");
+  assert.equal(aligned.htf.direction, "BULLISH");
+  assert.equal(aligned.ltf.direction, "BULLISH");
+
+  assert.equal(conflicting.aligned, false);
+  assert.equal(conflicting.direction, null);
 });
 
 it("validates bullish entries when the risk, POI and confluence checks align", () => {

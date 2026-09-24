@@ -4,9 +4,18 @@ function combineHTFLTF(htfZones, ltfZones) {
   const ltf =
     Array.isArray(ltfZones) && ltfZones.length > 0 ? ltfZones[0] : null;
 
-  const htfDirection = htf ? htf.direction : null;
-  const ltfDirection = ltf ? ltf.direction : null;
-  const aligned = htfDirection !== null && htfDirection === ltfDirection;
+  const htfDirection =
+    htf && ["BULLISH", "BEARISH"].includes(htf.direction)
+      ? htf.direction
+      : null;
+  const ltfDirection =
+    ltf && ["BULLISH", "BEARISH"].includes(ltf.direction)
+      ? ltf.direction
+      : null;
+  const aligned =
+    htfDirection !== null &&
+    ltfDirection !== null &&
+    htfDirection === ltfDirection;
 
   return {
     aligned,
