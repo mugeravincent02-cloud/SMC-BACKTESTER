@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node server/server.js",
-    "test": "node --test tests/api/*.test.js tests/market/*.test.js tests/strategy/*.test.js"
+    "test": "node --test tests/api/*.test.js tests/market/*.test.js tests/strategy/*.test.js tests/backtesting/*.test.js"
   },
   "keywords": [],
   "author": "",
