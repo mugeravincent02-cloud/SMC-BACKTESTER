@@ -1,3 +1,23 @@
+STAGE 08: POINTS OF INTEREST (POI)
+
+OBJECTIVE
+
+Group the most relevant structure and imbalance zones into a points-of-interest list.
+
+RULES
+
+- Use valid FVGs, liquidity levels and nearby structure references.
+- Keep the result directional and deterministic.
+- Do not invent entries from invalid or conflicting zones.
+- Prefer historical-only references and existing data already available.
+
+IMPORTANT
+
+- A POI is not an entry.
+- A POI must be supported by a valid directional zone.
+- Stage 08 depends on the Stage 07 FVG contract.
+
+Do not proceed to Stage 09 until the Stage 08 test contract passes.
 STAGE 08: POINT OF INTEREST ENGINE
 
 OBJECTIVE
