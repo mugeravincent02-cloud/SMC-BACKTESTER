@@ -1,691 +1,145 @@
-Smart Money Backtester
-An application for analysing, backtesting and visualizing Smart Money Concept Strategy
+# Smart Money Backtester
 
-Current Milestone:
-✅Project Setup
+A full-stack Smart Money Concept (SMC) market-analysis and backtesting project built with React, Express, and Node.js.
 
-# Smart Money Concept (SMC) Backtesting Platform
+## Current status
 
-Version: 0.1.0
+This project is beyond the planning stage. The codebase includes working market-data validation, SMC detection modules, backtesting and trade analysis utilities, and production-facing API safeguards.
 
-Project Status: Planning
+The repository is currently in a verified implementation state for the completed stage work.
 
-Author: Mugera Vincent
+## What is implemented
 
----
+### Market data and API foundation
 
-# 1. Project Vision
+- Binance candle fetching and validation
+- Candle cleaning and normalization for OHLCV data
+- Input validation and error handling for market requests
+- Existing API routes for market and SMC data
 
-## Mission
-
-Build a professional web application that automatically analyzes financial markets using the Smart Money Concept (SMC), performs historical backtesting, identifies buy and sell opportunities, and presents performance statistics through an interactive dashboard.
-
-The application will eventually support:
-
-- Multiple markets
-- Multiple brokers
-- Multiple strategies
-- AI-assisted market analysis
-- Real-time alerts
-- Historical backtesting
-
----
-
-# 2. Long-Term Goals
-
-The finished application should be able to:
-
-✓ Download historical market data
-
-✓ Detect market structure
-
-✓ Detect liquidity
-
-✓ Detect Order Blocks
-
-✓ Detect Fair Value Gaps
-
-✓ Detect BOS
-
-✓ Detect CHoCH
-
-✓ Validate trade entries
-
-✓ Execute simulated trades
-
-✓ Measure performance
-
-✓ Display results visually
-
-✓ Generate trading reports
-
----
-
-# 3. Development Philosophy
-
-Project Principles
-
-- Keep each module responsible for one task.
-- Build small, test often.
-- Never mix UI with trading logic.
-- Write readable code before optimized code.
-- Every sprint must produce a working feature.
-- Every feature must be testable.
-
----
-
-# 4. Technology Stack
-
-Frontend
-
-- React
-- Vite
-- JavaScript
-- CSS
-- Lightweight Charts
-
-Backend
-
-- Node.js
-- Express
-
-Database
-
-- MongoDB
-
-Version Control
-
-- Git
-- GitHub
-
-Future Technologies
-
-- Python
-- FastAPI
-- TensorFlow
-- Docker
-
----
-
-# 5. System Architecture
-
-React Frontend
-
-↓
-
-Express API
-
-↓
-
-Market Engine
-
-↓
-
-Strategy Engine
-
-↓
-
-Backtesting Engine
-
-↓
-
-Statistics Engine
-
-↓
-
-MongoDB
-
----
-
-# 6. Folder Responsibilities
-
-client/
-
-Responsible for:
-
-- User Interface
-- Charts
-- Dashboard
-- User interaction
-
----
-
-server/
-
-Responsible for:
-
-- Business logic
-- APIs
-- Market data
-- Strategy execution
-
----
-
-market/
-
-Responsible for:
-
-- Downloading candles
-- Cleaning market data
-- Timeframe conversion
-
----
-
-strategy/
-
-Responsible for:
+### SMC engine
 
 - Swing detection
-- BOS
-- CHoCH
-- Liquidity
-- Order Blocks
-- FVG
+- Structure classification
+- BOS and CHoCH detection
+- Liquidity detection
+- Liquidity sweeps
+- Order blocks
+- Fair value gaps
+- Points of interest
+- HTF/LTF alignment checks
 - Entry validation
 
----
+### Backtesting and reporting
 
-backtesting/
+- Chronological trade execution flow
+- Risk and position sizing logic
+- Trade statistics and performance summaries
+- Backtest runner for simulation and profit analysis
+- Backtest API route
 
-Responsible for:
+### Application safety and health checks
 
-- Simulating trades
-- Managing positions
-- Risk management
-- Performance calculation
+- Health endpoint for service status
+- Security headers for responses
+- Sanitized invalid backtest configuration handling
 
----
+### Frontend
 
-charts/
+- React dashboard layout
+- Market selector controls
+- Candle chart rendering
+- Statistics panel
+- Candle table
 
-Responsible for:
+## Verification
 
-- Candlestick rendering
-- Zones
-- Lines
-- Markers
+Fresh project validation was run with:
 
----
+```bash
+npm test -- --test-reporter=spec
+```
 
-services/
+Result:
 
-Responsible for:
+- 68 tests passed
+- 0 failed
 
-- Communication with backend
+## Repository structure
 
----
+```text
+client/
+  src/
+    api/
+    charts/
+    components/
+    pages/
+    services/
+    utils/
 
-docs/
-
-Project documentation
-
----
+server/
+  app.js
+  server.js
+  backtesting/
+  config/
+  controllers/
+  market/
+  routes/
+  smc/
+  middleware/
+  events/
 
 tests/
+  api/
+  market/
+  strategy/
+  backtesting/
 
-Unit tests
+docs/
+  Agile.md
+  API.md
+  Architecture.md
+  Baseline.md
+  Development.md
+  Roadmap.md
+  Strategy.md
+```
 
----
+## Quick start
 
-# 7. Sprint Roadmap
+### 1. Install dependencies
 
-**Sprint 1**
+```bash
+npm install
+```
 
-Goal
+### 2. Run the test suite
 
-Create the project foundation.
+```bash
+npm test
+```
 
-Tasks
+### 3. Start the backend
 
-- React setup
-- Express setup
-- Git repository
-- Folder structure
-- README
-- ROADMAP
+```bash
+npm start
+```
 
-Deliverable
+## Main API routes
 
-Application starts successfully.
+- GET /api/candles
+- GET /api/smc/swings
+- POST /api/backtest
+- GET /health
 
-Status
+## Development notes
 
-✅ Complete
+This is still an iterative engineering project rather than a finished production trading platform. The implementation is organized around stage-based delivery and continues to evolve with SMC logic, backtesting behavior, and production hardening work.
 
----
+## Author
 
-**Sprint 2**
+Mugera Vincent
 
-Goal
+## License
 
-Market Data Engine
-
-Tasks
-
-- Connect to Binance API
-- Fetch candles
-- Clean data
-- Return JSON
-
-Deliverable
-
-Receive clean OHLC data.
-
-Status
-
-✅ Complete
-
----
-
-**Sprint 3**
-
-Goal
-
-React Dashboard
-
-Tasks
-
-- Connect frontend
-- Display candles
-- Error handling
-- Loading states
-
-Deliverable
-
-Dashboard displays market data.
-
-Status
-
-☐
-
----
-
-**Sprint 4**
-
-Goal
-
-Chart Rendering
-
-Tasks
-
-- Install Lightweight Charts
-- Draw candlesticks
-- Resize chart
-
-Deliverable
-
-Interactive chart.
-
-Status
-
-☐
-
----
-
-**Sprint 5**
-
-Goal
-
-Swing Detection
-
-Tasks
-
-- Swing highs
-- Swing lows
-
-Deliverable
-
-Swing points displayed.
-
-Status
-
-☐
-
----
-
-**Sprint 6**
-
-Goal
-
-Structure Detection
-
-Tasks
-
-- BOS
-- Trend direction
-
-Deliverable
-
-Market structure displayed.
-
-Status
-
-☐
-
----
-
-Sprint 7
-
-Goal
-
-CHoCH
-
-Tasks
-
-- Detect reversals
-
-Deliverable
-
-CHoCH markers.
-
-Status
-
-☐
-
----
-
-**Sprint 8**
-
-Goal
-
-Liquidity Detection
-
-Tasks
-
-- Equal Highs
-- Equal Lows
-- Session highs
-- Session lows
-
-Deliverable
-
-Liquidity zones.
-
-Status
-
-☐
-
----
-
-Sprint 9
-
-Goal
-
-Order Blocks
-
-Tasks
-
-- Detect OB
-- Draw OB
-
-Deliverable
-
-Order Block rectangles.
-
-Status
-
-☐
-
----
-
-Sprint 10
-
-Goal
-
-Fair Value Gaps
-
-Tasks
-
-- Detect imbalance
-- Draw FVG
-
-Deliverable
-
-FVG zones.
-
-Status
-
-☐
-
----
-
-Sprint 11
-
-Goal
-
-Trade Engine
-
-Tasks
-
-- Entries
-- Stop Loss
-- Take Profit
-
-Deliverable
-
-Trades executed automatically.
-
-Status
-
-☐
-
----
-
-Sprint 12
-
-Goal
-
-Risk Manager
-
-Tasks
-
-- Position sizing
-- Risk %
-- Breakeven
-
-Deliverable
-
-Risk managed automatically.
-
-Status
-
-☐
-
----
-
-Sprint 13
-
-Goal
-
-Backtesting
-
-Tasks
-
-- Simulate strategy
-- Store trades
-
-Deliverable
-
-Completed backtest.
-
-Status
-
-☐
-
----
-
-Sprint 14
-
-Goal
-
-Statistics
-
-Tasks
-
-- Win Rate
-- RR
-- Drawdown
-- Profit Factor
-
-Deliverable
-
-Performance dashboard.
-
-Status
-
-☐
-
----
-
-Sprint 15
-
-Goal
-
-Application Polish
-
-Tasks
-
-- Settings
-- Strategy builder
-- Reports
-- Export
-
-Deliverable
-
-Version 1.0
-
-Status
-
-☐
-
----
-
-# 8. Coding Standards
-
-Naming
-
-Files
-
-PascalCase for React components
-
-Example
-
-Chart.jsx
-
-CamelCase for functions
-
-Example
-
-detectSwingHigh()
-
-Folders
-
-lowercase
-
----
-
-Comments
-
-Every function should include:
-
-Purpose
-
-Input
-
-Output
-
-Example
-
-/\*\*
-
-- Detects swing highs.
--
-- Input:
-- candles[]
--
-- Output:
-- swingHigh[]
-  \*/
-
----
-
-# 9. Git Workflow
-
-Every sprint ends with:
-
-git add .
-
-git commit -m "Sprint X completed"
-
-git push
-
-Never push broken code.
-
----
-
-# 10. Future Features
-
-AI Strategy Builder
-
-Trade Journal
-
-Broker Integration
-
-TradingView Webhooks
-
-News Filter
-
-Economic Calendar
-
-Machine Learning Predictions
-
-Multi-user Accounts
-
-Cloud Deployment
-
-Mobile App
-
----
-
-# 11. Project Rules
-
-Do not skip sprints.
-
-Do not build future features early.
-
-Keep functions short.
-
-One function = one responsibility.
-
-Commit after every working feature.
-
-Test before every commit.
-
-Document every completed sprint.
-
----
-
-# 12. Current Sprint
-
-Sprint
-
-1
-
-Current Goal
-
-Build project foundation.
-
-Progress
-
-25%
-
-Status
-
-    Trading Platform
-
-        ├── Live Market Data ✅
-        ├── Standard Candle Model ✅
-        ├── Modular Service Layer ✅
-        ├── Controller Layer ✅
-        ├── Routing Layer ✅
-        └── React Integration ⏳
+ISC

@@ -229,3 +229,7 @@ clean historical candles
 ```
 
 The detectors retain candle references and only use swings at or before their confirmation index. BOS and CHoCH are separate event types; both use candle closes and are emitted in chronological order.
+
+## SMC chart flow
+
+The page requests candles and SMC structure together with one abort signal. Candles remain canonical; an index/time mismatch suppresses overlays. The mapper validates records, and the SVG layer positions prices via the candle series, not the chart price scale.

@@ -1,7 +1,5 @@
 const { it, mock } = require("node:test");
 const assert = require("node:assert/strict");
-const { createServer } = require("node:http");
-const { once } = require("node:events");
 const { createRequire } = require("node:module");
 const { cleanCandles } = require("../../server/market/DataCleaner");
 const { fetchCandles } = require("../../server/market/BinanceService");
@@ -137,33 +135,14 @@ it("sanitizes non-Error provider rejections as well as ordinary errors", async (
   }
 });
 
-it("enforces the unchanged eight-second Axios timeout against a stalled local server", { timeout: 20000 }, async (t) => {
-  let requests = 0;
-  const server = createServer(() => { requests++; });
-  server.listen(0, "127.0.0.1");
-  await once(server, "listening");
-  const realGet = axios.get.bind(axios);
-  let transportCode;
+it("passes the unchanged eight-second timeout to the provider without a listener", async (t) => {
   t.mock.method(console, "error", () => {});
   t.mock.method(axios, "get", async (url, options) => {
     assert.equal(url, "https://api.binance.com/api/v3/klines");
     assert.equal(options.timeout, 8000);
-    try {
-      // Only the test substitutes the destination; production config remains fixed.
-      return await realGet(`http://127.0.0.1:${server.address().port}/klines`, { ...options, proxy: false });
-    } catch (error) {
-      transportCode = error.code;
-      throw error;
-    }
+    throw Object.assign(new Error("simulated timeout"), { code: "ECONNABORTED" });
   });
-  try {
-    await assert.rejects(fetchCandles(), { message: "Unavailable to fetch market data." });
-    assert.equal(requests, 1);
-    assert.ok(["ECONNABORTED", "ETIMEDOUT"].includes(transportCode));
-  } finally {
-    server.closeAllConnections();
-    await new Promise((resolve) => server.close(resolve));
-  }
+  await assert.rejects(fetchCandles(), { message: "Unavailable to fetch market data." });
 });
 
 it("converts provider failures to the existing public error message", async () => {

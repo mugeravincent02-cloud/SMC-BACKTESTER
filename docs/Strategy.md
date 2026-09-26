@@ -33,4 +33,8 @@ Completed:
 
 Planned in later approved stages:
 
+## Chart availability / non-repainting rule
+
+SMC chart labels retain their detector source and confirmation candles. A label may first render only on confirmation (or `firstAvailableTime`), never the source candle. Forming zones are dashed; the inspector reports confirmed, mitigated, swept, or reclaimed state when supplied.
+
 - Order blocks, fair value gaps, mitigation, entries, exits, and risk management
