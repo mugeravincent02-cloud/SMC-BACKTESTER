@@ -92,6 +92,10 @@
   position: relative;
 }
 
+.navbar details[open] {
+  z-index: 35;
+}
+
 .navbar summary {
   cursor: pointer;
   border: 1px solid var(--border);

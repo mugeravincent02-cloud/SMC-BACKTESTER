@@ -185,7 +185,7 @@ export default function Home() {
   return (
     <DashboardLayout>
       <Navbar>
-        <details>
+        <details name="navbar-panel">
           <summary>Market</summary>
           <Sidebar
             symbol={symbol}
@@ -198,7 +198,7 @@ export default function Home() {
             loadMarket={() => loadMarket({ symbol, interval, limit })}
           />
         </details>
-        <details>
+        <details name="navbar-panel">
           <summary>SMC overlays</summary>
           <OverlayControls
             visible={overlayVisible}
@@ -209,15 +209,15 @@ export default function Home() {
             liquidity levels.
           </p>
         </details>
-        <details>
+        <details name="navbar-panel">
           <summary>Verification</summary>
           <OverlayVerification selected={selectedOverlay} />
         </details>
-        <details>
+        <details name="navbar-panel">
           <summary>Stats</summary>
           <StatisticalPanel market={market} />
         </details>
-        <details>
+        <details name="navbar-panel">
           <summary>Developer</summary>
           <label className="developer-toggle">
             <input

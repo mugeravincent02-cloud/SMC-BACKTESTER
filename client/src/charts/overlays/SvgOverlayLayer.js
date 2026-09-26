@@ -4,7 +4,17 @@ const colors = { BULLISH: ["rgba(16,185,129,.20)", "#34d399"], BEARISH: ["rgba(2
 export function renderSvgOverlayLayer(svg, chart, candleSeries, visible, overlays, onSelect) {
   if (!svg || !chart || !candleSeries) return;
   svg.replaceChildren();
-  const x = (time) => chart.timeScale().timeToCoordinate(time);
+  const width = svg.clientWidth || svg.parentElement?.clientWidth || 0;
+  const visibleRange = chart.timeScale().getVisibleRange?.();
+  const x = (time, fallback) => {
+    const coordinate = chart.timeScale().timeToCoordinate(time);
+    if (Number.isFinite(coordinate)) return coordinate;
+    if (visibleRange && Number.isFinite(Number(time))) {
+      if (Number(time) <= Number(visibleRange.from)) return 0;
+      if (Number(time) >= Number(visibleRange.to)) return width;
+    }
+    return fallback;
+  };
   const y = (value) => candleSeries.priceToCoordinate(value);
   const add = (tag, attrs, item) => {
     const node = document.createElementNS(NS, tag);
@@ -16,15 +26,15 @@ export function renderSvgOverlayLayer(svg, chart, candleSeries, visible, overlay
   };
   const rect = (item, muted = false) => {
     const [fill, stroke] = colors[item.direction] || ["rgba(96,165,250,.10)", "#60a5fa"];
-    const x1 = x(item.startTime), x2 = x(item.endTime), y1 = y(item.low), y2 = y(item.high);
+    const x1 = x(item.startTime, 0), x2 = x(item.endTime, width), y1 = y(item.low), y2 = y(item.high);
     if ([x1, x2, y1, y2].every(Number.isFinite)) add("rect", { x: Math.min(x1,x2), y: Math.min(y1,y2), width: Math.max(2,Math.abs(x2-x1)), height: Math.max(2,Math.abs(y2-y1)), fill: muted ? fill.replace(".20", ".10") : fill, stroke, "stroke-width": 1, "stroke-dasharray": item.confirmed === false ? "4 3" : "" }, item);
   };
   const line = (item, stroke, dash = "") => {
-    const x1 = x(item.startTime), x2 = x(item.endTime), yy = y(item.level);
+    const x1 = x(item.startTime, 0), x2 = x(item.endTime, width), yy = y(item.level);
     if ([x1,x2,yy].every(Number.isFinite)) add("line", { x1, x2, y1: yy, y2: yy, stroke, "stroke-width": 1.5, "stroke-dasharray": dash }, item);
   };
   const breakMarker = (item, color, label) => {
-    const xx = x(item.time), yy = y(item.level);
+    const xx = x(item.time, null), yy = y(item.level);
     if (![xx, yy].every(Number.isFinite)) return;
     add("circle", { cx: xx, cy: yy, r: 4, fill: color, stroke: "#fff", "stroke-width": 1 }, item);
     add("text", { x: xx + 6, y: yy - 6, fill: color, "font-size": 11, "font-weight": 700 }, item);
