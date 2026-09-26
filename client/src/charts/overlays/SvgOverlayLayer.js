@@ -11,7 +11,7 @@ export function renderSvgOverlayLayer(svg, chart, candleSeries, visible, overlay
     Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, String(value)));
     node.style.pointerEvents = "all";
     node.style.cursor = "pointer";
-    node.addEventListener("click", () => onSelect(item));
+    node.addEventListener("click", () => onSelect?.(item));
     svg.append(node);
   };
   const rect = (item, muted = false) => {

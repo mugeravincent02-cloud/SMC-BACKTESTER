@@ -32,14 +32,19 @@ it("uses the same candle limit range as the backend", async () => {
   assert.match(html, /step="1"/);
 });
 
-it("renders the dashboard controls and all layout sections", async () => {
+it("renders the full-screen chart workspace with navbar dropdown controls", async () => {
   const { default: Home } = await vite.ssrLoadModule("/src/pages/Home.jsx");
   const html = renderToStaticMarkup(createElement(Home));
-  for (const className of ["dashboard-layout", "navbar", "sidebar", "chart", "statistics", "table"]) {
+  for (const className of ["dashboard-layout", "navbar", "navbar-controls", "sidebar", "chart", "chart-host"]) {
     assert.ok(html.includes(`class="${className}"`));
   }
+  assert.match(html, /<summary>Market<\/summary>/);
+  assert.match(html, /<summary>SMC overlays<\/summary>/);
+  assert.match(html, /<summary>Verification<\/summary>/);
+  assert.match(html, /<summary>Stats<\/summary>/);
+  assert.match(html, /<summary>Developer<\/summary>/);
   assert.match(html, /Load Market/);
-  assert.match(html, /No market data available/);
+  assert.doesNotMatch(html, /class="table"/);
 });
 
 it("converts candle timestamps to chart seconds without altering OHLC data", async () => {
