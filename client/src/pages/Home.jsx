@@ -11,6 +11,98 @@ import CandleTable from "../components/market/CandleTable";
 import { getMarketData } from "../services/MarketService";
 import { getSmcData } from "../services/SMCService";
 
+const overlayDefaults = {
+  fvg: true,
+  bos: true,
+  choch: true,
+  liquidity: true,
+  orderBlocks: true,
+  pois: true,
+};
+
+function formatOverlayLabel(key) {
+  return key.replace(/([A-Z])/g, " $1").toUpperCase();
+}
+
+function formatStamp(time) {
+  return time ? new Date(time * 1000).toLocaleString() : "—";
+}
+
+function OverlayControls({ visible, setVisible }) {
+  return (
+    <fieldset className="overlay-controls" aria-label="SMC overlays">
+      {Object.keys(overlayDefaults).map((key) => (
+        <label key={key}>
+          <input
+            type="checkbox"
+            checked={visible[key]}
+            onChange={() =>
+              setVisible((old) => ({ ...old, [key]: !old[key] }))
+            }
+          />
+          {formatOverlayLabel(key)}
+        </label>
+      ))}
+    </fieldset>
+  );
+}
+
+function OverlayVerification({ selected }) {
+  if (!selected) {
+    return <p>Select an SMC line, zone, or marker on the chart to inspect it.</p>;
+  }
+
+  const level =
+    selected.level ?? `${selected.low ?? "—"}-${selected.high ?? "—"}`;
+  const status =
+    selected.confirmed === false
+      ? "forming"
+      : selected.mitigated
+        ? "mitigated"
+        : selected.swept
+          ? "swept"
+          : selected.reclaimed
+            ? "reclaimed"
+            : "confirmed";
+
+  return (
+    <dl className="overlay-verification">
+      <div>
+        <dt>Type</dt>
+        <dd>{selected.kind || selected.type || "SMC"}</dd>
+      </div>
+      <div>
+        <dt>Direction</dt>
+        <dd>{selected.direction || "NEUTRAL"}</dd>
+      </div>
+      <div>
+        <dt>Source</dt>
+        <dd>
+          {selected.sourceIndex ?? "—"} · {formatStamp(selected.startTime)}
+        </dd>
+      </div>
+      <div>
+        <dt>Confirmed</dt>
+        <dd>
+          {selected.confirmationIndex ?? "—"} · {formatStamp(selected.time)}
+        </dd>
+      </div>
+      <div>
+        <dt>Available</dt>
+        <dd>{formatStamp(selected.firstAvailableTime)}</dd>
+      </div>
+      <div>
+        <dt>Level</dt>
+        <dd>{level}</dd>
+      </div>
+      <div>
+        <dt>Status</dt>
+        <dd>{status}</dd>
+      </div>
+    </dl>
+  );
+}
+
 export default function Home() {
   const [symbol, setSymbol] = useState("BTCUSDT");
   const [interval, setInterval] = useState("1h");
@@ -18,6 +110,9 @@ export default function Home() {
 
   const [market, setMarket] = useState(null);
   const [smcData, setSmcData] = useState(null);
+  const [overlayVisible, setOverlayVisible] = useState(overlayDefaults);
+  const [selectedOverlay, setSelectedOverlay] = useState(null);
+  const [showDeveloperData, setShowDeveloperData] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const activeRequest = useRef(null);
@@ -66,6 +161,7 @@ export default function Home() {
 
       setMarket(marketData);
       setSmcData(structureData);
+      setSelectedOverlay(null);
     } catch (err) {
       if (!controller.signal.aborted) {
         setError(
@@ -88,7 +184,51 @@ export default function Home() {
 
   return (
     <DashboardLayout>
-      <Navbar />
+      <Navbar>
+        <details name="navbar-panel">
+          <summary>Market</summary>
+          <Sidebar
+            symbol={symbol}
+            interval={interval}
+            limit={limit}
+            loading={loading}
+            setSymbol={setSymbol}
+            setInterval={setInterval}
+            setLimit={setLimit}
+            loadMarket={() => loadMarket({ symbol, interval, limit })}
+          />
+        </details>
+        <details name="navbar-panel">
+          <summary>SMC overlays</summary>
+          <OverlayControls
+            visible={overlayVisible}
+            setVisible={setOverlayVisible}
+          />
+          <p className="navbar-help">
+            FVG gap, BOS break of structure, CHoCH reversal, and dashed
+            liquidity levels.
+          </p>
+        </details>
+        <details name="navbar-panel">
+          <summary>Verification</summary>
+          <OverlayVerification selected={selectedOverlay} />
+        </details>
+        <details name="navbar-panel">
+          <summary>Stats</summary>
+          <StatisticalPanel market={market} />
+        </details>
+        <details name="navbar-panel">
+          <summary>Developer</summary>
+          <label className="developer-toggle">
+            <input
+              type="checkbox"
+              checked={showDeveloperData}
+              onChange={() => setShowDeveloperData((current) => !current)}
+            />
+            Show normalized Binance candle table
+          </label>
+        </details>
+      </Navbar>
       {loading && (
         <div className="market-status" role="status">
           Loading Market...
@@ -99,19 +239,11 @@ export default function Home() {
           {error} Try loading the market again.
         </div>
       )}
-      <Sidebar
-        symbol={symbol}
-        interval={interval}
-        limit={limit}
-        loading={loading}
-        setSymbol={setSymbol}
-        setInterval={setInterval}
-        setLimit={setLimit}
-        loadMarket={() => loadMarket({ symbol, interval, limit })}
-      />
       <section className="chart" aria-label="Candlestick chart">
         <CandleChart
           candles={market?.data || []}
+          visible={overlayVisible}
+          onSelectOverlay={setSelectedOverlay}
           overlays={
             smcData?.overlays || {
               fvg: [],
@@ -124,12 +256,11 @@ export default function Home() {
           }
         />
       </section>
-      <div className="statistics">
-        <StatisticalPanel market={market} />
-      </div>
-      <div className="table">
-        <CandleTable candles={market?.data || []} />
-      </div>
+      {showDeveloperData && (
+        <div className="table" aria-label="Developer candle data">
+          <CandleTable candles={market?.data || []} />
+        </div>
+      )}
     </DashboardLayout>
   );
 }

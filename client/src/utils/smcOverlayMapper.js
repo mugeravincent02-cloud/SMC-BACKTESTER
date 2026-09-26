@@ -6,9 +6,14 @@ const price = (value) => { const number = Number(value); return Number.isFinite(
 export function mapSmcOverlays(overlays, candles) {
   const result = Object.fromEntries(FAMILIES.map((family) => [family, []]));
   const times = (candles || []).map((candle) => seconds(candle?.time)).filter((time) => time !== null);
-  const available = new Set(times);
+  const firstTime = times[0];
   const lastTime = times.at(-1);
   if (!overlays || !lastTime) return result;
+  const clampTime = (value, fallback = lastTime) => {
+    const parsed = seconds(value);
+    if (parsed === null) return fallback;
+    return Math.min(Math.max(parsed, firstTime), lastTime);
+  };
   for (const family of FAMILIES) {
     const ids = new Set();
     for (const raw of Array.isArray(overlays[family]) ? overlays[family] : []) {
@@ -16,11 +21,17 @@ export function mapSmcOverlays(overlays, candles) {
       const sourceIndex = Number(raw.sourceIndex ?? raw.startIndex ?? raw.index);
       const confirmationIndex = Number(raw.confirmationIndex ?? raw.breakIndex ?? raw.endIndex ?? raw.index);
       if ((Number.isFinite(sourceIndex) && (sourceIndex < 0 || sourceIndex >= times.length)) || (Number.isFinite(confirmationIndex) && (confirmationIndex < 0 || confirmationIndex >= times.length))) continue;
-      const startTime = seconds(raw.startTime ?? raw.time ?? times[sourceIndex]);
-      const endTime = seconds(raw.endTime ?? raw.time ?? lastTime);
-      const eventTime = seconds(raw.time ?? times[confirmationIndex] ?? startTime);
-      const firstAvailableTime = seconds(raw.firstAvailableTime ?? raw.confirmationTime ?? times[confirmationIndex] ?? eventTime);
-      if (startTime === null || endTime === null || eventTime === null || firstAvailableTime === null || endTime < startTime || !available.has(startTime) || !available.has(eventTime) || !available.has(endTime) || !available.has(firstAvailableTime)) continue;
+      const startTime = clampTime(raw.startTime ?? raw.time ?? times[sourceIndex], firstTime);
+      const endTime = clampTime(raw.endTime ?? raw.time ?? lastTime, lastTime);
+      const eventTime = clampTime(raw.time ?? times[confirmationIndex] ?? startTime, startTime);
+      const firstAvailableTime = Math.max(
+        startTime,
+        clampTime(
+          raw.firstAvailableTime ?? raw.confirmationTime ?? times[confirmationIndex] ?? eventTime,
+          eventTime,
+        ),
+      );
+      if (endTime < startTime) continue;
       const item = { ...raw, id: String(raw.id), startTime, endTime, time: eventTime, firstAvailableTime, sourceIndex: Number.isFinite(sourceIndex) ? sourceIndex : undefined, confirmationIndex: Number.isFinite(confirmationIndex) ? confirmationIndex : undefined };
       if (["fvg", "orderBlocks", "pois"].includes(family)) {
         item.low = price(raw.low ?? raw.startPrice); item.high = price(raw.high ?? raw.endPrice);
