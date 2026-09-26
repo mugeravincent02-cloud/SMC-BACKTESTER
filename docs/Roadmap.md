@@ -230,3 +230,7 @@ Stage 04 adds the liquidity-core layer: configurable equal highs/lows with numer
 ## Stage 05 activation — Liquidity sweep detection, 2026-09-23
 
 Stage 05 is complete and locally verified. The project now includes sweep-and-reclaim detection with SSL/BSL context, sweep candle metadata, relevant price, direction, and confirmation/reclaim checks without using future candles. False or failed sweeps are covered, and Stage 06 must remain out of scope until a new stage is explicitly opened.
+
+## Readiness baseline
+
+Before drawing tools, clean dependency install, backend/client tests, and the production build must pass. The SMC inspector exposes source, confirmation, and first-available timing; drawing tools remain deferred until this baseline is maintained.

@@ -59,3 +59,7 @@ Manual browser checks:
 5. Stop the backend, request data, restart the backend, and retry. Verify the page remains usable after failure.
 
 Browser automation was unavailable during this repair pass. Live API/proxy checks passed; the manual interaction and visual checks above still require a browser.
+
+## Readiness verification
+
+Run `npm.cmd ci`, `npm.cmd test`, `npm.cmd --prefix client ci`, `npm.cmd --prefix client test`, and `npm.cmd --prefix client run build`. Create release ZIPs without `.git`, `.env`, `node_modules`, `dist`, or private `Stage*.txt` files.

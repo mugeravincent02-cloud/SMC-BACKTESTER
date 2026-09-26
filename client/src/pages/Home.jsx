@@ -9,6 +9,7 @@ import StatisticalPanel from "../components/market/StatisticsPanel";
 import CandleTable from "../components/market/CandleTable";
 
 import { getMarketData } from "../services/MarketService";
+import { getSmcData } from "../services/SMCService";
 
 export default function Home() {
   const [symbol, setSymbol] = useState("BTCUSDT");
@@ -16,6 +17,7 @@ export default function Home() {
   const [limit, setLimit] = useState(100);
 
   const [market, setMarket] = useState(null);
+  const [smcData, setSmcData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const activeRequest = useRef(null);
@@ -28,13 +30,51 @@ export default function Home() {
     setError("");
 
     try {
-      const data = await getMarketData(
-        selection.symbol, selection.interval, selection.limit, controller.signal
-      );
-      if (!controller.signal.aborted) setMarket(data);
+      const [marketData, structureData] = await Promise.all([
+        getMarketData(
+          selection.symbol,
+          selection.interval,
+          selection.limit,
+          controller.signal,
+        ),
+        getSmcData(
+          selection.symbol,
+          selection.interval,
+          selection.limit,
+          controller.signal,
+        ),
+      ]);
+
+      if (controller.signal.aborted) return;
+
+      const marketCandles = Array.isArray(marketData?.data)
+        ? marketData.data
+        : [];
+      const smcCandles = Array.isArray(structureData?.data)
+        ? structureData.data
+        : [];
+      if (
+        marketCandles.length > 0 &&
+        smcCandles.length > 0 &&
+        (marketCandles.length !== smcCandles.length ||
+          marketCandles.some((candle, index) => candle.time !== smcCandles[index]?.time))
+      ) {
+        throw new Error(
+          "Market and SMC candle data mismatch. Overlay data was not rendered.",
+        );
+      }
+
+      setMarket(marketData);
+      setSmcData(structureData);
     } catch (err) {
       if (!controller.signal.aborted) {
-        setError(err.response?.data?.message || err.message);
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "Unable to load market or SMC data.",
+        );
+        setMarket(null);
+        setSmcData(null);
       }
     } finally {
       if (!controller.signal.aborted) setLoading(false);
@@ -49,8 +89,16 @@ export default function Home() {
   return (
     <DashboardLayout>
       <Navbar />
-      {loading && <div className="market-status" role="status">Loading Market...</div>}
-      {error && <div className="market-status" role="alert">{error} Try loading the market again.</div>}
+      {loading && (
+        <div className="market-status" role="status">
+          Loading Market...
+        </div>
+      )}
+      {error && (
+        <div className="market-status" role="alert">
+          {error} Try loading the market again.
+        </div>
+      )}
       <Sidebar
         symbol={symbol}
         interval={interval}
@@ -62,7 +110,19 @@ export default function Home() {
         loadMarket={() => loadMarket({ symbol, interval, limit })}
       />
       <section className="chart" aria-label="Candlestick chart">
-        <CandleChart candles={market?.data || []} />
+        <CandleChart
+          candles={market?.data || []}
+          overlays={
+            smcData?.overlays || {
+              fvg: [],
+              bos: [],
+              choch: [],
+              liquidity: [],
+              orderBlocks: [],
+              pois: [],
+            }
+          }
+        />
       </section>
       <div className="statistics">
         <StatisticalPanel market={market} />

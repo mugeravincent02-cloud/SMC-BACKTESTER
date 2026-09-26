@@ -1,5 +1,9 @@
 Authentication
 
+## SMC chart overlay availability
+
+`GET /api/smc/swings` returns chart-ready overlay families in `overlays`. The client renders an event no earlier than its confirmation/`firstAvailableTime`; API candle timestamps are milliseconds while chart timestamps are Unix seconds.
+
 Endpoints
 
 Request
