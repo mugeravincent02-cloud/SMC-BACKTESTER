@@ -1,12 +1,13 @@
 # Smart Money Backtester
 
-A full-stack Smart Money Concept (SMC) market-analysis and backtesting project built with React, Express, and Node.js.
+Current Milestone:
+✅Project Finalization
 
 ## Current status
 
 This project is beyond the planning stage. The codebase includes working market-data validation, SMC detection modules, backtesting and trade analysis utilities, and production-facing API safeguards.
 
-The repository is currently in a verified implementation state for the completed stage work.
+Project Status: Finishing 
 
 ## What is implemented
 
