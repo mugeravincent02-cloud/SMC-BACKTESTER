@@ -36,9 +36,7 @@ function OverlayControls({ visible, setVisible }) {
           <input
             type="checkbox"
             checked={visible[key]}
-            onChange={() =>
-              setVisible((old) => ({ ...old, [key]: !old[key] }))
-            }
+            onChange={() => setVisible((old) => ({ ...old, [key]: !old[key] }))}
           />
           {formatOverlayLabel(key)}
         </label>
@@ -49,7 +47,9 @@ function OverlayControls({ visible, setVisible }) {
 
 function OverlayVerification({ selected }) {
   if (!selected) {
-    return <p>Select an SMC line, zone, or marker on the chart to inspect it.</p>;
+    return (
+      <p>Select an SMC line, zone, or marker on the chart to inspect it.</p>
+    );
   }
 
   const level =
@@ -106,10 +106,11 @@ function OverlayVerification({ selected }) {
 export default function Home() {
   const [symbol, setSymbol] = useState("BTCUSDT");
   const [interval, setInterval] = useState("1h");
-  const [limit, setLimit] = useState(100);
+  const [limit, setLimit] = useState(1000);
 
   const [market, setMarket] = useState(null);
   const [smcData, setSmcData] = useState(null);
+  const [openPanel, setOpenPanel] = useState("");
   const [overlayVisible, setOverlayVisible] = useState(overlayDefaults);
   const [selectedOverlay, setSelectedOverlay] = useState(null);
   const [showDeveloperData, setShowDeveloperData] = useState(false);
@@ -152,7 +153,9 @@ export default function Home() {
         marketCandles.length > 0 &&
         smcCandles.length > 0 &&
         (marketCandles.length !== smcCandles.length ||
-          marketCandles.some((candle, index) => candle.time !== smcCandles[index]?.time))
+          marketCandles.some(
+            (candle, index) => candle.time !== smcCandles[index]?.time,
+          ))
       ) {
         throw new Error(
           "Market and SMC candle data mismatch. Overlay data was not rendered.",
@@ -178,15 +181,44 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    loadMarket({ symbol: "BTCUSDT", interval: "1h", limit: 100 });
+    loadMarket({ symbol: "BTCUSDT", interval: "1h", limit: 1000 });
     return () => activeRequest.current?.abort();
   }, [loadMarket]);
+
+  useEffect(() => {
+    const closePanels = (event) => {
+      if (
+        event.target instanceof Element &&
+        event.target.closest(".navbar-controls")
+      ) {
+        return;
+      }
+
+      setOpenPanel("");
+    };
+
+    document.addEventListener("pointerdown", closePanels);
+    return () => {
+      document.removeEventListener("pointerdown", closePanels);
+    };
+  }, []);
+
+  const togglePanel = (panel) => {
+    setOpenPanel((current) => (current === panel ? "" : panel));
+  };
 
   return (
     <DashboardLayout>
       <Navbar>
-        <details name="navbar-panel">
-          <summary>Market</summary>
+        <details open={openPanel === "market"}>
+          <summary
+            onClick={(event) => {
+              event.preventDefault();
+              togglePanel("market");
+            }}
+          >
+            Market
+          </summary>
           <Sidebar
             symbol={symbol}
             interval={interval}
@@ -198,27 +230,55 @@ export default function Home() {
             loadMarket={() => loadMarket({ symbol, interval, limit })}
           />
         </details>
-        <details name="navbar-panel">
-          <summary>SMC overlays</summary>
+
+        <details open={openPanel === "overlays"}>
+          <summary
+            onClick={(event) => {
+              event.preventDefault();
+              togglePanel("overlays");
+            }}
+          >
+            SMC overlays
+          </summary>
           <OverlayControls
             visible={overlayVisible}
             setVisible={setOverlayVisible}
           />
-          <p className="navbar-help">
-            FVG gap, BOS break of structure, CHoCH reversal, and dashed
-            liquidity levels.
-          </p>
         </details>
-        <details name="navbar-panel">
-          <summary>Verification</summary>
+
+        <details open={openPanel === "verification"}>
+          <summary
+            onClick={(event) => {
+              event.preventDefault();
+              togglePanel("verification");
+            }}
+          >
+            Verification
+          </summary>
           <OverlayVerification selected={selectedOverlay} />
         </details>
-        <details name="navbar-panel">
-          <summary>Stats</summary>
+
+        <details open={openPanel === "stats"}>
+          <summary
+            onClick={(event) => {
+              event.preventDefault();
+              togglePanel("stats");
+            }}
+          >
+            Stats
+          </summary>
           <StatisticalPanel market={market} />
         </details>
-        <details name="navbar-panel">
-          <summary>Developer</summary>
+
+        <details open={openPanel === "developer"}>
+          <summary
+            onClick={(event) => {
+              event.preventDefault();
+              togglePanel("developer");
+            }}
+          >
+            Developer
+          </summary>
           <label className="developer-toggle">
             <input
               type="checkbox"

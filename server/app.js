@@ -20,9 +20,35 @@ app.use(express.json({ strict: true }));
 app.use("/api/smc", smcRoutes);
 app.use("/api", marketRoutes);
 
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    service: "smc-backtester",
+  });
+});
+
 app.post("/api/backtest", (req, res) => {
   try {
     const config = req.body || {};
+
+    const hasRequiredShape =
+      config &&
+      typeof config === "object" &&
+      !Array.isArray(config) &&
+      (config.symbol ||
+        config.timeframe ||
+        config.range ||
+        config.initialBalance ||
+        config.riskPercent ||
+        config.trades);
+
+    if (!hasRequiredShape) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid backtest configuration.",
+      });
+    }
+
     const symbol =
       typeof config.symbol === "string" ? config.symbol : "BTCUSDT";
     const timeframe =
@@ -54,7 +80,7 @@ app.post("/api/backtest", (req, res) => {
       riskPercent,
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       backtest: {
         symbol,
@@ -67,7 +93,7 @@ app.post("/api/backtest", (req, res) => {
       summary: backtest.summary,
     });
   } catch (error) {
-    res.status(400).json({
+    return res.status(400).json({
       success: false,
       message: "Invalid backtest configuration.",
     });
