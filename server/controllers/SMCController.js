@@ -10,6 +10,8 @@ const { normalizeSmcOverlays } = require("../smc/ChartOverlayBuilder");
 
 const BinanceService = require("../market/BinanceService");
 const DataCleaner = require("../market/DataCleaner");
+const { performance } = require('node:perf_hooks');
+const { requestContext, logFailure } = require('../market/MarketDiagnostics');
 
 function includePoiCandidates(fvg, bos, choch, orderBlocks, liquidity) {
   const candidates = [];
@@ -121,10 +123,15 @@ function includePoiCandidates(fvg, bos, choch, orderBlocks, liquidity) {
 }
 
 async function detectMarketStructure(req, res) {
+  const context = requestContext('/api/smc/swings');
+  const started = performance.now();
+  let stage = 'upstream';
   try {
     const { symbol, interval, limit } = req.marketQuery;
-    const raw = await BinanceService.fetchCandles(symbol, interval, limit);
+    const raw = await BinanceService.fetchCandles(symbol, interval, limit, context);
+    stage = 'cleaning';
     const candles = DataCleaner.cleanCandles(raw);
+    stage = 'smc';
 
     const swings = detectSwings(candles);
     const structure = classifyStructure(swings);
@@ -163,9 +170,10 @@ async function detectMarketStructure(req, res) {
 
     res.json(payload);
   } catch (error) {
+    logFailure(`market_request_failure:${stage}`, context, req.marketQuery || {}, started, error);
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Unavailable to fetch market data.",
     });
   }
 }
