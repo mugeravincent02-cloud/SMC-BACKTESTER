@@ -4,22 +4,27 @@ const {
   DEFAULT_INTERVAL,
   DEFAULT_LIMIT,
 } = require("../config/MarketConfig");
-const BASE_URL = "https://api.binance.com/api/v3/klines";
+const { performance } = require('node:perf_hooks');
+const { UPSTREAM_URL, requestContext, logFailure } = require('./MarketDiagnostics');
 
 /**
  * Fetch a raw Binance candle array. An empty array is a valid empty result.
  * @param {string} symbol
  * @param {string} interval
  * @param {number} limit
+ * @param {{requestId: string, endpoint?: string}} context Internal correlation only.
  * @returns {Promise<Array>}
  */
 async function fetchCandles(
   symbol = DEFAULT_SYMBOL,
   interval = DEFAULT_INTERVAL,
-  limit = DEFAULT_LIMIT
+  limit = DEFAULT_LIMIT,
+  context = requestContext()
 ) {
+  const started = performance.now();
+  let response;
   try {
-    const response = await axios.get(BASE_URL, {
+    response = await axios.get(UPSTREAM_URL, {
       timeout: 8000,
       params: {
         symbol,
@@ -28,12 +33,12 @@ async function fetchCandles(
       },
     });
     if (!Array.isArray(response?.data)) {
-      throw new Error("Invalid market-data response.");
+      throw Object.assign(new Error("Invalid market-data response."), { code: 'INVALID_UPSTREAM_RESPONSE' });
     }
     return response.data;
-  } catch {
+  } catch (error) {
     // Provider bodies, request config and exception messages are not public output.
-    console.error("Binance API Error: request or response failed.");
+    logFailure('binance_failure', context, { symbol, interval, limit }, started, error, response);
     throw new Error("Unavailable to fetch market data.");
   }
 }

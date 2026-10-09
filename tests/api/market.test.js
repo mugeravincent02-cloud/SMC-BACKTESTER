@@ -37,12 +37,14 @@ describe("market API regressions (stubbed provider, no network dependency)", () 
     it(`${endpoint}: applies existing defaults`, async () => {
       const body = await request(endpoint, 200);
       assert.equal(body.success, true);
-      assert.deepEqual(provider.mock.calls.at(-1).arguments, ["BTCUSDT", "1h", 100]);
+      assert.deepEqual(provider.mock.calls.at(-1).arguments.slice(0, 3), ["BTCUSDT", "1h", 100]);
+      assert.match(provider.mock.calls.at(-1).arguments[3].requestId, /^[a-f0-9-]{36}$/);
+      assert.equal(provider.mock.calls.at(-1).arguments[3].endpoint, endpoint);
     });
 
     it(`${endpoint}: forwards validated selections with numeric limits`, async () => {
       await request(`${endpoint}?symbol=ETHUSDT&interval=5m&limit=50`, 200);
-      assert.deepEqual(provider.mock.calls.at(-1).arguments, ["ETHUSDT", "5m", 50]);
+      assert.deepEqual(provider.mock.calls.at(-1).arguments.slice(0, 3), ["ETHUSDT", "5m", 50]);
     });
 
     it(`${endpoint}: accepts both limit boundaries`, async () => {
